@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build output (regenerated with npm run build)
+dist/
+
+# Vite cache
+.vite/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Optional: Package lock (uncomment if you prefer not to track it)
+# package-lock.json

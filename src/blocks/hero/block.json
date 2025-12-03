@@ -1,7 +1,7 @@
 {
     "apiVersion": 2,
-    "name": "my-theme/hero-fixed",
-    "title": "Hero Section (Fixed)",
+    "name": "my-theme/hero",
+    "title": "Hero Section",
     "category": "design",
     "attributes": {
         "title": {
