@@ -1,0 +1,29 @@
+{
+    "version": 2,
+    "settings": {
+        "appearanceTools": false,
+        "color": {
+            "custom": false,
+            "palette": [
+                {
+                    "slug": "primary",
+                    "color": "#000000",
+                    "name": "Primary Black"
+                },
+                {
+                    "slug": "accent",
+                    "color": "#FF5733",
+                    "name": "Brand Orange"
+                }
+            ]
+        },
+        "typography": {
+            "customFontSize": false,
+            "dropCap": false
+        },
+        "layout": {
+            "contentSize": "800px",
+            "wideSize": "1200px"
+        }
+    }
+}

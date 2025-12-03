@@ -1,0 +1,21 @@
+{
+    "apiVersion": 2,
+    "name": "my-theme/hero-fixed",
+    "title": "Hero Section (Fixed)",
+    "category": "design",
+    "attributes": {
+        "title": {
+            "type": "string",
+            "default": "Welcome"
+        },
+        "subtitle": {
+            "type": "string"
+        },
+        "imageUrl": {
+            "type": "string"
+        },
+        "imageId": {
+            "type": "number"
+        }
+    }
+}

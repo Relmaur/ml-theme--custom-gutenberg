@@ -1,0 +1,15 @@
+/*
+Theme Name: Rigid Hybrid
+Theme URI: [https://example.com/rigid-hybrid](https://example.com/rigid-hybrid)
+Author: Your Name
+Author URI: [https://example.com](https://example.com)
+Description: A hybrid WordPress theme using Vite, React blocks, and a classic PHP fallback structure.
+Version: 1.0.0
+Requires at least: 6.0
+Requires PHP: 7.4
+Text Domain: rigid-hybrid
+*/
+
+/* Global styles are handled via Vite (src/css/main.scss). 
+  This file is primarily for the theme header.
+*/

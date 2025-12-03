@@ -1,0 +1,1 @@
+/* empty css              */console.log("Rigid Hybrid Theme Loaded");document.addEventListener("DOMContentLoaded",()=>{const e=document.querySelector(".menu-toggle");e&&e.addEventListener("click",()=>{document.body.classList.toggle("menu-open")})});
