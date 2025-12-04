@@ -96,7 +96,7 @@ This is the most common task. Follow these **4 steps** to add a new "Rigid" bloc
 
 Create a folder in `src/blocks/{block-slug}/` (e.g., `src/blocks/team-member/`).
 
-You need **4 files**:
+**Required files:**
 
 | File | Purpose |
 |------|---------|
@@ -104,6 +104,16 @@ You need **4 files**:
 | `index.jsx` | Entry point (imports styling, registers block) |
 | `edit.jsx` | The Editor UI (Inputs/Settings) |
 | `save.jsx` | The Frontend HTML |
+
+**Optional per-block assets (BlockStudio-style):**
+
+| File | Purpose | When Loaded |
+|------|---------|-------------|
+| `style.scss` | Visual styles for the block | Frontend + Editor |
+| `editor.scss` | Editor-only UI styles | Editor only |
+| `view.js` | Frontend interactions/animations | Frontend only |
+
+> **Tip:** You can use Tailwind classes exclusively and skip the SCSS files entirely!
 
 ### Step 2: Configure `block.json`
 
@@ -126,41 +136,64 @@ Define your attributes (the data fields).
 }
 ```
 
-### Step 3: Register in PHP
+### Step 3: Create `index.jsx` with Asset Imports
 
-Open `inc/blocks-register.php`. You must manually register the script handle to ensure Vite loads it correctly.
+```jsx
+import { registerBlockType } from '@wordpress/blocks';
+import Edit from './edit';
+import Save from './save';
+import metadata from './block.json';
 
-```php
-// 1. Register the Vite entry point (register only, don't enqueue)
-vite_register_asset( 
-    'team-member-script', 
-    '/src/blocks/team-member/index.jsx', 
-    ['wp-blocks', 'wp-element', 'wp-editor', 'wp-components'] 
-);
+// Optional: Import per-block styles (remove if using Tailwind only)
+import './style.scss';   // Frontend + Editor styles
+import './editor.scss';  // Editor-only styles
 
-// 2. Register the block type
-register_block_type( get_theme_file_path( '/src/blocks/team-member' ), array(
-    'editor_script' => 'team-member-script', 
-));
+registerBlockType(metadata.name, {
+    ...metadata,
+    edit: Edit,
+    save: Save,
+});
 ```
 
-### Step 4: Add to Vite Config
+### Step 4: Register in PHP
 
-Open `vite.config.js`. Add the new block's entry point to the `input` object so Vite knows to bundle it.
+Open `inc/blocks-register.php` and use the helper function:
+
+```php
+// Simply add one line per block!
+register_theme_block('team-member', 'my-theme/team-member');
+```
+
+The `register_theme_block()` helper automatically handles:
+- Editor script registration
+- Frontend view.js (if it exists)
+- Block styles in production
+
+### Step 5: Add to Vite Config
+
+Open `vite.config.js`. Add the new block's entry points to the `input` object:
 
 ```javascript
 build: {
   rollupOptions: {
     input: {
+      // Global assets
       main: path.resolve(__dirname, 'src/js/main.js'),
       style: path.resolve(__dirname, 'src/scss/main.scss'),
+      
+      // Block: Hero
       'block-hero': path.resolve(__dirname, 'src/blocks/hero/index.jsx'),
-      // ADD THIS LINE:
-      'block-team': path.resolve(__dirname, 'src/blocks/team-member/index.jsx'), 
+      'block-hero-view': path.resolve(__dirname, 'src/blocks/hero/view.js'),
+      
+      // Block: Team Member (ADD THESE LINES)
+      'block-team': path.resolve(__dirname, 'src/blocks/team-member/index.jsx'),
+      'block-team-view': path.resolve(__dirname, 'src/blocks/team-member/view.js'), // Only if view.js exists
     },
   },
 }
 ```
+
+> **Note:** Only add the `view.js` entry if your block has frontend JavaScript.
 
 ---
 

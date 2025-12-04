@@ -8,6 +8,10 @@ define('VITE_ENTRY_POINT', '/src/js/main.js');
 global $vite_script_handles;
 $vite_script_handles = [];
 
+// Cache the manifest to avoid reading it multiple times
+global $vite_manifest_cache;
+$vite_manifest_cache = null;
+
 function vite_is_dev_server_running()
 {
     static $is_dev = null;
@@ -21,6 +25,31 @@ function vite_is_dev_server_running()
         $is_dev = true;
     }
     return $is_dev;
+}
+
+/**
+ * Get the Vite manifest (cached)
+ */
+function vite_get_manifest()
+{
+    global $vite_manifest_cache;
+    
+    if ($vite_manifest_cache !== null) {
+        return $vite_manifest_cache;
+    }
+    
+    $manifest_path = get_theme_file_path('/dist/.vite/manifest.json');
+    if (!file_exists($manifest_path)) {
+        $manifest_path = get_theme_file_path('/dist/manifest.json');
+    }
+    
+    if (!file_exists($manifest_path)) {
+        $vite_manifest_cache = [];
+        return $vite_manifest_cache;
+    }
+    
+    $vite_manifest_cache = json_decode(file_get_contents($manifest_path), true);
+    return $vite_manifest_cache;
 }
 
 /**
@@ -58,14 +87,9 @@ function vite_enqueue_asset($handle, $entry_point, $dependencies = [], $enqueue 
         }
     } else {
         // Production: Load from Manifest
-        $manifest_path = get_theme_file_path('/dist/.vite/manifest.json');
-        if (!file_exists($manifest_path)) {
-            // Try alternate location
-            $manifest_path = get_theme_file_path('/dist/manifest.json');
-        }
-        if (!file_exists($manifest_path)) return;
-
-        $manifest = json_decode(file_get_contents($manifest_path), true);
+        $manifest = vite_get_manifest();
+        if (empty($manifest)) return;
+        
         // Remove leading slash for manifest lookup
         $manifest_key = ltrim($entry_point, '/');
 
@@ -77,10 +101,11 @@ function vite_enqueue_asset($handle, $entry_point, $dependencies = [], $enqueue 
 
             // Register CSS associated with this entry if it exists
             if (!empty($manifest[$manifest_key]['css'])) {
-                foreach ($manifest[$manifest_key]['css'] as $css_file) {
-                    wp_register_style($handle . '-style', get_theme_file_uri('/dist/' . $css_file));
+                foreach ($manifest[$manifest_key]['css'] as $index => $css_file) {
+                    $style_handle = $index === 0 ? $handle . '-style' : $handle . '-style-' . $index;
+                    wp_register_style($style_handle, get_theme_file_uri('/dist/' . $css_file));
                     if ($enqueue) {
-                        wp_enqueue_style($handle . '-style');
+                        wp_enqueue_style($style_handle);
                     }
                 }
             }
@@ -99,6 +124,37 @@ function vite_enqueue_asset($handle, $entry_point, $dependencies = [], $enqueue 
 function vite_register_asset($handle, $entry_point, $dependencies = [])
 {
     vite_enqueue_asset($handle, $entry_point, $dependencies, false);
+}
+
+/**
+ * Register block frontend styles from the manifest
+ * Returns the style handle if found, null otherwise
+ * 
+ * @param string $slug       Block slug (e.g., 'hero')
+ * @param string $block_path Block path (e.g., '/src/blocks/hero')
+ * @return string|null       Style handle or null
+ */
+function vite_register_block_style($slug, $block_path)
+{
+    $manifest = vite_get_manifest();
+    if (empty($manifest)) return null;
+    
+    // Look for the block's entry in the manifest
+    $manifest_key = ltrim($block_path, '/') . '/index.jsx';
+    
+    if (isset($manifest[$manifest_key]) && !empty($manifest[$manifest_key]['css'])) {
+        $handle = "{$slug}-block-style";
+        
+        // Register all CSS files associated with this block
+        foreach ($manifest[$manifest_key]['css'] as $index => $css_file) {
+            $style_handle = $index === 0 ? $handle : "{$handle}-{$index}";
+            wp_register_style($style_handle, get_theme_file_uri('/dist/' . $css_file));
+        }
+        
+        return $handle;
+    }
+    
+    return null;
 }
 
 // Add type="module" to all Vite-registered scripts (both dev and production)

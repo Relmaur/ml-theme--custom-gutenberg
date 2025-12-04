@@ -1,0 +1,73 @@
+/**
+ * Hero Block - Editor-Only Styles
+ * 
+ * These styles are ONLY loaded in the block editor.
+ * Use this for editor UI, placeholders, and admin-specific styling.
+ */
+
+.hero-section {
+    /* Editor-specific wrapper styling */
+    &.is-selected {
+        outline: 2px solid var(--wp-admin-theme-color);
+        outline-offset: 2px;
+    }
+    
+    .hero-inner {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        color: white;
+    }
+    
+    .hero-content {
+        flex: 1;
+        min-width: 280px;
+        
+        h1 {
+            font-size: 2rem;
+            margin: 0 0 0.5rem;
+            
+            &:focus {
+                outline: none;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 4px;
+            }
+        }
+        
+        .hero-subtitle-preview {
+            opacity: 0.8;
+            font-style: italic;
+            margin: 0;
+        }
+    }
+    
+    .hero-image {
+        flex: 1;
+        min-width: 200px;
+        
+        > div {
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.875rem;
+            
+            &:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+        }
+        
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    }
+}

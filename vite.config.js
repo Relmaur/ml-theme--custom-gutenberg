@@ -145,9 +145,17 @@ export default defineConfig({
         manifest: true,
         rollupOptions: {
             input: {
+                // Global assets
                 main: path.resolve(__dirname, 'src/js/main.js'),
                 style: path.resolve(__dirname, 'src/scss/main.scss'),
+                
+                // Block: Hero
                 'block-hero': path.resolve(__dirname, 'src/blocks/hero/index.jsx'),
+                'block-hero-view': path.resolve(__dirname, 'src/blocks/hero/view.js'),
+                
+                // Add more blocks here...
+                // 'block-team': path.resolve(__dirname, 'src/blocks/team-member/index.jsx'),
+                // 'block-team-view': path.resolve(__dirname, 'src/blocks/team-member/view.js'),
             },
             output: {
                 format: 'es',
