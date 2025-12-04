@@ -5,6 +5,10 @@
  * Use this for animations, interactions, or dynamic behavior.
  */
 
+// Import frontend styles for dev mode (Vite injects CSS via JS during HMR)
+// In production, CSS is extracted and registered separately via PHP
+import './style.scss';
+
 document.addEventListener('DOMContentLoaded', () => {
     const heroSections = document.querySelectorAll('.hero-section');
     

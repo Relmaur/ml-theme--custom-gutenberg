@@ -6,7 +6,7 @@ export default function Save({ attributes }) {
 
     return (
         <section {...blockProps}>
-            <div className="container">
+            <div className="section-container">
                 <div className="text-col">
                     <RichText.Content tagName="h1" value={title} />
                     {subtitle && <p className="subtitle">{subtitle}</p>}

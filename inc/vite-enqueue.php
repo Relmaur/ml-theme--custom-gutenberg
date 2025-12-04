@@ -139,8 +139,11 @@ function vite_register_block_style($slug, $block_path)
     $manifest = vite_get_manifest();
     if (empty($manifest)) return null;
     
-    // Look for the block's entry in the manifest
-    $manifest_key = ltrim($block_path, '/') . '/index.jsx';
+    // Look for CSS in view.js first (frontend styles), then fall back to index.jsx
+    $view_key = ltrim($block_path, '/') . '/view.js';
+    $index_key = ltrim($block_path, '/') . '/index.jsx';
+    
+    $manifest_key = isset($manifest[$view_key]) ? $view_key : $index_key;
     
     if (isset($manifest[$manifest_key]) && !empty($manifest[$manifest_key]['css'])) {
         $handle = "{$slug}-block-style";

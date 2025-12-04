@@ -11,11 +11,11 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     
-    .container {
+    .section-container {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        max-width: 1200px;
+        max-width: 1440px;
         margin: 0 auto;
         gap: 2rem;
     }
