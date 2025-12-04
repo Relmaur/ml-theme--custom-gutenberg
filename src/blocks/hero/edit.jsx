@@ -1,9 +1,8 @@
-import { useBlockProps, RichText, MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
-import { Button, PanelBody, TextControl } from '@wordpress/components';
-import { InspectorControls } from '@wordpress/block-editor';
+import { useBlockProps, RichText, MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
+import { Button, PanelBody, TextControl, ColorPicker } from '@wordpress/components';
 
 export default function Edit({ attributes, setAttributes }) {
-    const { title, subtitle, imageUrl, imageId } = attributes;
+    const { title, subtitle, imageUrl, imageId, backgroundColor } = attributes;
     const blockProps = useBlockProps({ className: 'hero-section' });
 
     // Function to handle image selection
@@ -12,10 +11,16 @@ export default function Edit({ attributes, setAttributes }) {
     };
 
     return (
-        <div {...blockProps}>
-            {/* 1. Sidebar Controls (The "Carbon Fields" Settings area) */}
+        <section {...blockProps} style={{ backgroundColor: backgroundColor }}>
+            {/* Sidebar Controls */}
             <InspectorControls>
-                <PanelBody title="Hero Settings">
+                <PanelBody title="Hero Title & Subtitle" initialOpen={true}>
+                    <TextControl
+                        label="Title (Plain Text)"
+                        value={title}
+                        onChange={(val) => setAttributes({ title: val })}
+                        help="Enter the main headline."
+                    />
                     <TextControl
                         label="Subtitle (Plain Text)"
                         value={subtitle}
@@ -25,36 +30,61 @@ export default function Edit({ attributes, setAttributes }) {
                 </PanelBody>
             </InspectorControls>
 
-            {/* 2. Visual Editor (Restricted) */}
-            <div className="hero-inner">
-                <div className="hero-content">
-                    {/* RESTRICTION: Only H1 allowed, no bold/italic controls */}
+            <InspectorControls group="styles">
+                <PanelBody title="Hero Background" initialOpen={true}>
+                    <fieldset className="ml-fieldset">
+                        <legend>Background Color</legend>
+                        <ColorPicker
+                            color={backgroundColor}
+                            onChange={(color) => setAttributes({ backgroundColor: color })}
+                            enableAlpha
+                            defaultValue="#000"
+                        />
+                    </fieldset>
+                </PanelBody>
+            </InspectorControls>
+
+            {/* 2. Visual Editor - Mirrors render.php structure */}
+            <div className="section-container">
+                <div className="text-col">
                     <RichText
                         tagName="h1"
                         value={title}
                         onChange={(val) => setAttributes({ title: val })}
                         placeholder="Enter Hero Title..."
-                        allowedFormats={[]} // Disable bold, italic, links
-                        disableLineBreaks // Force single line
+                        allowedFormats={['my-theme/highlight', 'my-theme/font-weight', 'my-theme/font-accent']}
+                        // disableLineBreaks
                     />
-                    <p className="hero-subtitle-preview">{subtitle || 'Add subtitle in sidebar...'}</p>
+                    <RichText
+                        tagName="p"
+                        value={subtitle}
+                        onChange={(val) => setAttributes({ subtitle: val })}
+                        placeholder="Enter Hero Subtitle..."
+                        allowedFormats={['my-theme/highlight', 'my-theme/font-weight', 'my-theme/font-accent']}
+                        // disableLineBreaks
+                    />
+                    {/* <p className="subtitle">{subtitle || 'Add subtitle in sidebar...'}</p> */}
                 </div>
 
-                <div className="hero-image">
+                <div className="img-col">
                     <MediaUploadCheck>
                         <MediaUpload
                             onSelect={onSelectImage}
                             allowedTypes={['image']}
                             value={imageId}
                             render={({ open }) => (
-                                <div onClick={open} style={{ cursor: 'pointer', background: '#f0f0f0', minHeight: '200px' }}>
-                                    {imageUrl ? <img src={imageUrl} alt="" /> : 'Click to Upload Image'}
+                                <div className="image-upload-area" onClick={open}>
+                                    {imageUrl ? (
+                                        <img src={imageUrl} alt="" />
+                                    ) : (
+                                        <span className="upload-placeholder">Click to Upload Image</span>
+                                    )}
                                 </div>
                             )}
                         />
                     </MediaUploadCheck>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

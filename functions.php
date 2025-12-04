@@ -40,3 +40,17 @@ add_action('wp_enqueue_scripts', function () {
     // CSS is automatically loaded when main.js imports it
     vite_enqueue_asset('rigid-theme-main', '/src/js/main.js', array());
 });
+
+// Register Custom Block Category
+add_filter('block_categories_all', function ($categories) {
+    $my_custom_category = array(
+        array(
+            'slug'  => 'theme-bocks',
+            'title' => 'Theme Blocks',
+            'icon'  => null, // Optional
+        ),
+    );
+
+    // Merging $my_custom_category FIRST puts it at the top
+    return array_merge($my_custom_category, $categories);
+}, 10, 1);

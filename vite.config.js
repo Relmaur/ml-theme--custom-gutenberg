@@ -152,7 +152,7 @@ function jsxTransform() {
 
 export default defineConfig({
     plugins: [
-        phpReload(),
+        // phpReload(),
         wordpressExternalsDev(),
         wordpressExternalsBuild(),
         jsxTransform(),

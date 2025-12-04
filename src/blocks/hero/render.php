@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Hero Block - Server-side Rendering
  * 
@@ -14,20 +15,27 @@
 $title = $attributes['title'] ?? '';
 $subtitle = $attributes['subtitle'] ?? '';
 $image_url = $attributes['imageUrl'] ?? '';
+$background_color = $attributes['backgroundColor'] ?? '';
+$styles = '';
+
+if ($background_color) {
+    // Apply inline style for background color if set
+    $styles = 'style="background-color: ' . esc_attr($background_color) . ';"';
+}
 
 // Get block wrapper attributes (includes className, align, etc.)
 $wrapper_attributes = get_block_wrapper_attributes(['class' => 'hero-section']);
 ?>
 
-<section <?php echo $wrapper_attributes; ?>>
+<section <?php echo $wrapper_attributes; ?> <?php echo $styles; ?>>
     <div class="section-container">
         <div class="text-col">
             <?php if ($title) : ?>
                 <h1><?php echo wp_kses_post($title); ?></h1>
             <?php endif; ?>
-            
+
             <?php if ($subtitle) : ?>
-                <p class="subtitle"><?php echo esc_html($subtitle); ?></p>
+                <p class="subtitle"><?php echo wp_kses_post($subtitle); ?></p>
             <?php endif; ?>
         </div>
         <div class="img-col">

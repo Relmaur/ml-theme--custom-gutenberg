@@ -4,7 +4,19 @@
     "title": "Hero Section",
     "category": "design",
     "render": "file:./render.php",
+    "supports": {
+        "lock": false,
+        "reusable": false,
+        "html": false
+    },
     "attributes": {
+        "lock": {
+            "type": "object",
+            "default": {
+                "move": true,
+                "remove": true
+            }
+        },
         "title": {
             "type": "string",
             "default": "Welcome"
@@ -17,6 +29,10 @@
         },
         "imageId": {
             "type": "number"
+        },
+        "backgroundColor": {
+            "type": "string",
+            "default": "#000000"
         }
     }
 }

@@ -3,71 +3,67 @@
  * 
  * These styles are ONLY loaded in the block editor.
  * Use this for editor UI, placeholders, and admin-specific styling.
+ * 
+ * Note: Layout styles are in style.scss (shared with frontend).
  */
 
+.ml-fieldset {
+    
+    legend {
+        margin: 0 0 1rem 0;
+    }
+}
+
 .hero-section {
-    /* Editor-specific wrapper styling */
+    max-width: 100% !important;
+
+    /* Selection outline */
     &.is-selected {
         outline: 2px solid var(--wp-admin-theme-color);
         outline-offset: 2px;
     }
-    
-    .hero-inner {
+
+    /* RichText focus state */
+    h1:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        // padding: 0.25rem;
+        // margin: -0.25rem;
+    }
+
+    /* Subtitle placeholder text */
+    .subtitle:empty::before {
+        content: 'Add subtitle in sidebar...';
+        opacity: 0.6;
+        font-style: italic;
+    }
+
+    /* Image upload area (editor only) */
+    .image-upload-area {
+        cursor: pointer;
+        min-height: 200px;
         display: flex;
-        flex-wrap: wrap;
-        gap: 2rem;
-        padding: 2rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
         border-radius: 8px;
-        color: white;
-    }
-    
-    .hero-content {
-        flex: 1;
-        min-width: 280px;
-        
-        h1 {
-            font-size: 2rem;
-            margin: 0 0 0.5rem;
-            
-            &:focus {
-                outline: none;
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: 4px;
-            }
+        transition: background 0.2s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
-        
-        .hero-subtitle-preview {
-            opacity: 0.8;
-            font-style: italic;
-            margin: 0;
-        }
-    }
-    
-    .hero-image {
-        flex: 1;
-        min-width: 200px;
-        
-        > div {
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 200px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 0.875rem;
-            
-            &:hover {
-                background: rgba(255, 255, 255, 0.2);
-            }
-        }
-        
+
         img {
             width: 100%;
             height: auto;
             display: block;
+        }
+
+        .upload-placeholder {
+            color: white;
+            font-size: 0.875rem;
+            opacity: 0.8;
         }
     }
 }

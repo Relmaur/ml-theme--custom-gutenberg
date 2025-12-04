@@ -14,6 +14,9 @@ import metadata from './block.json';
 import './style.scss';
 import './editor.scss';
 
+// Register custom RichText formats
+import './formats.jsx';
+
 registerBlockType(metadata.name, {
     ...metadata,
     edit: Edit,
