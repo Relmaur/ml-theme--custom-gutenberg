@@ -2,21 +2,9 @@
     "apiVersion": 2,
     "name": "my-theme/hero",
     "title": "Hero Section",
-    "category": "design",
+    "category": "theme-blocks",
     "render": "file:./render.php",
-    "supports": {
-        "lock": false,
-        "reusable": false,
-        "html": false
-    },
     "attributes": {
-        "lock": {
-            "type": "object",
-            "default": {
-                "move": true,
-                "remove": true
-            }
-        },
         "title": {
             "type": "string",
             "default": "Welcome"

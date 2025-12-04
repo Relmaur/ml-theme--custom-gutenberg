@@ -45,7 +45,7 @@ add_action('wp_enqueue_scripts', function () {
 add_filter('block_categories_all', function ($categories) {
     $my_custom_category = array(
         array(
-            'slug'  => 'theme-bocks',
+            'slug'  => 'theme-blocks',
             'title' => 'Theme Blocks',
             'icon'  => null, // Optional
         ),
@@ -54,3 +54,65 @@ add_filter('block_categories_all', function ($categories) {
     // Merging $my_custom_category FIRST puts it at the top
     return array_merge($my_custom_category, $categories);
 }, 10, 1);
+
+// add_filter('register_block_type_args', function ($args, $block_name) {
+//     $locked_namespaces = ['my-theme'];
+    
+//     foreach ($locked_namespaces as $namespace) {
+//         if (strpos($block_name, $namespace . '/') === 0) {
+//             // Set lock attribute
+//             if (!isset($args['attributes'])) {
+//                 $args['attributes'] = [];
+//             }
+            
+//             $args['attributes']['lock'] = [
+//                 'type'    => 'object',
+//                 'default' => ['move' => true, 'remove' => true],
+//             ];
+            
+//             // Disable UI options
+//             if (!isset($args['supports'])) {
+//                 $args['supports'] = [];
+//             }
+            
+//             $args['supports']['lock'] = false;
+//             $args['supports']['reusable'] = false;
+//             $args['supports']['html'] = false;
+            
+//             break;
+//         }
+//     }
+    
+//     return $args;
+// }, 10, 2);
+
+// /**
+//  * Remove block toolbar options (duplicate, remove) for locked custom blocks
+//  */
+// add_action('enqueue_block_editor_assets', function () {
+//     wp_add_inline_script('wp-block-editor', "
+//         wp.hooks.addFilter(
+//             'editor.BlockEdit',
+//             'my-theme/lock-blocks',
+//             wp.compose.createHigherOrderComponent((BlockEdit) => {
+//                 return (props) => {
+//                     const { name, attributes, setAttributes, clientId } = props;
+                    
+//                     // Check if this is one of our custom blocks
+//                     if (name && name.startsWith('my-theme/')) {
+//                         // Ensure the block is locked
+//                         if (!attributes.lock || !attributes.lock.move || !attributes.lock.remove) {
+//                             setTimeout(() => {
+//                                 setAttributes({
+//                                     lock: { move: true, remove: true }
+//                                 });
+//                             }, 0);
+//                         }
+//                     }
+                    
+//                     return wp.element.createElement(BlockEdit, props);
+//                 };
+//             }, 'lockCustomBlocks')
+//         );
+//     ", 'after');
+// });
