@@ -3,6 +3,7 @@
     "name": "my-theme/hero",
     "title": "Hero Section",
     "category": "design",
+    "render": "file:./render.php",
     "attributes": {
         "title": {
             "type": "string",

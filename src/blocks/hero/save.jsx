@@ -1,22 +1,14 @@
-import { useBlockProps, RichText } from '@wordpress/block-editor';
-
-export default function Save({ attributes }) {
-    const { title, subtitle, imageUrl } = attributes;
-    const blockProps = useBlockProps.save({ className: 'hero-section' });
-
-    return (
-        <section {...blockProps}>
-            <div className="section-container">
-                <div className="text-col">
-                    <RichText.Content tagName="h1" value={title} />
-                    {subtitle && <p className="subtitle">{subtitle}</p>}
-                </div>
-                <div className="img-col">
-                    {imageUrl && <img src={imageUrl} alt={title} />}
-                </div>
-            </div>
-        </section>
-    );
+/**
+ * Save function returns null for dynamic blocks.
+ * The frontend rendering is handled by PHP (render.php).
+ * 
+ * Benefits:
+ * - No "invalid content" errors when editing block structure
+ * - Full PHP/WordPress functions available for rendering
+ * - Easier to maintain during development
+ */
+export default function Save() {
+    return null;
 }
 
 

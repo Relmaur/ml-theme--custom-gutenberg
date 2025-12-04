@@ -54,6 +54,7 @@ npm run dev
 - **What this does:** Starts Vite on `http://localhost:3000`.
 - **The Bridge:** `inc/vite-enqueue.php` detects this port is open. It creates a script tag pointing to your local machine instead of the `dist/` folder.
 - **HMR:** Styles and React components update instantly without a full page reload.
+- **PHP Watching:** PHP files (including `render.php`) trigger automatic browser refresh on save.
 
 ### Building for Production
 
@@ -99,11 +100,12 @@ Create a folder in `src/blocks/{block-slug}/` (e.g., `src/blocks/team-member/`).
 **Required files:**
 
 | File | Purpose |
-|------|---------|
+|------|---------||
 | `block.json` | Block definition & attributes |
 | `index.jsx` | Entry point (imports styling, registers block) |
 | `edit.jsx` | The Editor UI (Inputs/Settings) |
-| `save.jsx` | The Frontend HTML |
+| `save.jsx` | Returns `null` for dynamic blocks |
+| `render.php` | Server-side frontend rendering |
 
 **Optional per-block assets (BlockStudio-style):**
 
@@ -115,9 +117,11 @@ Create a folder in `src/blocks/{block-slug}/` (e.g., `src/blocks/team-member/`).
 
 > **Tip:** You can use Tailwind classes exclusively and skip the SCSS files entirely!
 
+> **Why Dynamic Blocks?** Using `render.php` instead of a static `save.jsx` eliminates the "Block contains unexpected or invalid content" errors when you modify block structure during development. The frontend is always rendered fresh from PHP.
+
 ### Step 2: Configure `block.json`
 
-Define your attributes (the data fields).
+Define your attributes and point to the render file.
 
 > **Important:** Do NOT include `"editorScript": "file:./index.jsx"` — we handle script registration via PHP.
 
@@ -127,6 +131,7 @@ Define your attributes (the data fields).
   "name": "my-theme/team-member",
   "title": "Team Member",
   "category": "design",
+  "render": "file:./render.php",
   "attributes": {
     "name": { "type": "string" },
     "role": { "type": "string" },
@@ -155,7 +160,47 @@ registerBlockType(metadata.name, {
 });
 ```
 
-### Step 4: Register in PHP
+### Step 4: Create `save.jsx` (Dynamic Block)
+
+For dynamic blocks, `save.jsx` simply returns `null`. The frontend is rendered by PHP.
+
+```jsx
+/**
+ * Save returns null for dynamic blocks.
+ * Frontend rendering is handled by render.php
+ */
+export default function Save() {
+    return null;
+}
+```
+
+### Step 5: Create `render.php`
+
+This file renders the block on the frontend. You have access to:
+- `$attributes` - Block attributes from the editor
+- `$content` - Inner blocks content (if any)
+- `$block` - The WP_Block instance
+
+```php
+<?php
+$name = $attributes['name'] ?? '';
+$role = $attributes['role'] ?? '';
+$photo_url = $attributes['photoUrl'] ?? '';
+
+$wrapper_attributes = get_block_wrapper_attributes(['class' => 'team-member']);
+?>
+
+<div <?php echo $wrapper_attributes; ?>>
+    <?php if ($photo_url) : ?>
+        <img src="<?php echo esc_url($photo_url); ?>" alt="<?php echo esc_attr($name); ?>">
+    <?php endif; ?>
+    
+    <h3><?php echo esc_html($name); ?></h3>
+    <p class="role"><?php echo esc_html($role); ?></p>
+</div>
+```
+
+### Step 6: Register in PHP
 
 Open `inc/blocks-register.php` and use the helper function:
 
@@ -169,7 +214,7 @@ The `register_theme_block()` helper automatically handles:
 - Frontend view.js (if it exists)
 - Block styles in production
 
-### Step 5: Add to Vite Config
+### Step 7: Add to Vite Config
 
 Open `vite.config.js`. Add the new block's entry points to the `input` object:
 
@@ -299,3 +344,17 @@ This is your global stylesheet. It is imported by `src/js/main.js`.
 |---|---|
 | **Cause** | The production build wasn't run, or the manifest is outdated. |
 | **Fix** | Run `npm run build` to generate fresh production assets. |
+
+### "Block contains unexpected or invalid content"
+
+| | |
+|---|---|
+| **Cause** | The saved HTML in the database doesn't match the current `save.jsx` output. |
+| **Fix** | Use dynamic blocks (return `null` from `save.jsx` + use `render.php`). For existing blocks, remove and re-add them once after converting to dynamic. |
+
+### PHP changes not reflecting in browser
+
+| | |
+|---|---|
+| **Cause** | Vite's PHP watcher might not be detecting changes. |
+| **Fix** | Ensure `npm run dev` is running. PHP files trigger a full page reload (not HMR). Check terminal for "PHP file changed" messages. |

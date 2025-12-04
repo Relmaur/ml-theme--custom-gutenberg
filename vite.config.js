@@ -16,6 +16,22 @@ const wpExternals = {
     'react-dom': 'ReactDOM',
 };
 
+// Plugin to watch PHP files and trigger full page reload
+function phpReload() {
+    return {
+        name: 'php-reload',
+        configureServer(server) {
+            server.watcher.add(['**/*.php']);
+            server.watcher.on('change', (file) => {
+                if (file.endsWith('.php')) {
+                    console.log(`\n  PHP file changed: ${path.basename(file)}`);
+                    server.ws.send({ type: 'full-reload' });
+                }
+            });
+        },
+    };
+}
+
 // Plugin to handle WordPress externals in dev mode (virtual modules)
 function wordpressExternalsDev() {
     const virtualPrefix = '\0wp-external:';
@@ -136,6 +152,7 @@ function jsxTransform() {
 
 export default defineConfig({
     plugins: [
+        phpReload(),
         wordpressExternalsDev(),
         wordpressExternalsBuild(),
         jsxTransform(),
