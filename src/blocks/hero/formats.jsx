@@ -1,23 +1,26 @@
 // Access WordPress globals directly since Vite externals don't export all named exports
 const { registerFormatType, toggleFormat, applyFormat, removeFormat } = wp.richText;
-const { RichTextToolbarButton, URLPopover } = wp.blockEditor;
+const { RichTextToolbarButton } = wp.blockEditor;
 const { useState } = wp.element;
-const { Button, Popover, SelectControl } = wp.components;
+const { Button, Popover, Fill } = wp.components;
 
 const HighlightButton = ({ isActive, onChange, value }) => {
     return (
-        <RichTextToolbarButton
-            icon="admin-customizer"
-            title="Highlight"
-            isActive={isActive}
-            onClick={() => {
-                onChange(
-                    toggleFormat(value, {
-                        type: 'my-theme/highlight',
-                    })
-                );
-            }}
-        />
+        <>
+            {/* Button in the dropdown */}
+            <RichTextToolbarButton
+                icon="admin-customizer"
+                title="Highlight"
+                isActive={isActive}
+                onClick={() => {
+                    onChange(
+                        toggleFormat(value, {
+                            type: 'my-theme/highlight',
+                        })
+                    );
+                }}
+            />
+        </>
     );
 };
 
@@ -30,7 +33,7 @@ registerFormatType('my-theme/highlight', {
 });
 
 // Font Weight Button with Popover
-const FontWeightButton = ({ isActive, onChange, value }) => {
+const FontWeightButton = ({ isActive, onChange, value, contentRef }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const fontWeights = [
@@ -75,6 +78,7 @@ const FontWeightButton = ({ isActive, onChange, value }) => {
                     position="bottom center"
                     onClose={() => setIsOpen(false)}
                     className="my-theme-font-weight-popover"
+                    anchor={contentRef?.current}
                 >
                     <div style={{ padding: '12px', minWidth: '180px' }}>
                         <p style={{ marginTop: 0, marginBottom: '8px', fontWeight: 600 }}>

@@ -8,7 +8,7 @@
  */
 
 .ml-fieldset {
-    
+
     legend {
         margin: 0 0 1rem 0;
     }
@@ -23,12 +23,18 @@
         outline-offset: 2px;
     }
 
+    h1,
+    p {
+        transition: all 150ms ease;
+    }
+
     /* RichText focus state */
-    h1:focus {
+    h1:focus,
+    p:focus {
         outline: none;
         background: rgba(255, 255, 255, 0.1);
         border-radius: 4px;
-        // padding: 0.25rem;
+        padding: 0.25rem;
         // margin: -0.25rem;
     }
 

@@ -52,7 +52,7 @@ export default function Edit({ attributes, setAttributes }) {
                         value={title}
                         onChange={(val) => setAttributes({ title: val })}
                         placeholder="Enter Hero Title..."
-                        allowedFormats={['my-theme/highlight', 'my-theme/font-weight', 'my-theme/font-accent']}
+                        allowedFormats={['my-theme/font-weight', 'my-theme/font-accent']}
                         // disableLineBreaks
                     />
                     <RichText
@@ -60,7 +60,7 @@ export default function Edit({ attributes, setAttributes }) {
                         value={subtitle}
                         onChange={(val) => setAttributes({ subtitle: val })}
                         placeholder="Enter Hero Subtitle..."
-                        allowedFormats={['my-theme/highlight', 'my-theme/font-weight', 'my-theme/font-accent']}
+                        allowedFormats={['my-theme/font-weight', 'my-theme/font-accent']}
                         // disableLineBreaks
                     />
                     {/* <p className="subtitle">{subtitle || 'Add subtitle in sidebar...'}</p> */}
