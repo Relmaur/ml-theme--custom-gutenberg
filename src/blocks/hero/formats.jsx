@@ -75,7 +75,7 @@ const FontWeightButton = ({ isActive, onChange, value, contentRef }) => {
             />
             {isOpen && (
                 <Popover
-                    position="top"
+                    placement="top-start"
                     onClose={() => setIsOpen(false)}
                     className="my-theme-font-weight-popover"
                     anchor={contentRef?.current}
