@@ -18,6 +18,8 @@ Thumbs.db
 *.swo
 *~
 
+vendor/
+
 # Logs
 *.log
 npm-debug.log*
