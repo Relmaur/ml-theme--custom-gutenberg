@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace RigidHybrid;
 
 use RigidHybrid\Setup\ThemeSetup;
+use RigidHybrid\Setup\Enqueue;
+use RigidHybrid\Setup\BlockRegistry;
 
 /**
  * Class Theme
@@ -23,7 +25,8 @@ final class Theme
      */
     private array $services = [
         ThemeSetup::class,
-        // TODO: Add Enqueue::class, BlockRegistry::class, etc.
+        Enqueue::class,
+        BlockRegistry::class,
     ];
 
     /**
