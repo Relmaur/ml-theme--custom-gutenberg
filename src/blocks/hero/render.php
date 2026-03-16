@@ -15,19 +15,12 @@
 $title = $attributes['title'] ?? '';
 $subtitle = $attributes['subtitle'] ?? '';
 $image_url = $attributes['imageUrl'] ?? '';
-$background_color = $attributes['backgroundColor'] ?? '';
-$styles = '';
 
-if ($background_color) {
-    // Apply inline style for background color if set
-    $styles = 'style="background-color: ' . esc_attr($background_color) . ';"';
-}
-
-// Get block wrapper attributes (includes className, align, etc.)
+// Get block wrapper attributes (includes className, align, color support, etc.)
 $wrapper_attributes = get_block_wrapper_attributes(['class' => 'hero-section']);
 ?>
 
-<section <?php echo $wrapper_attributes; ?> <?php echo $styles; ?>>
+<section <?php echo $wrapper_attributes; ?>>
     <div class="section-container">
         <div class="text-col">
             <?php if ($title) : ?>

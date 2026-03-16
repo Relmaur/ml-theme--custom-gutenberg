@@ -6,18 +6,18 @@
  * Each block can have these optional assets in its folder:
  * - style.scss   → Frontend + Editor styles (visual appearance)
  * - editor.scss  → Editor-only styles (admin UI)
- * - view.js      → Frontend-only JavaScript (interactions/animations)
+ * - view.ts      → Frontend-only JavaScript (interactions/animations)
  */
 
 add_action('init', function () {
-    
+
     // Register Hero Block
     register_theme_block('hero', 'my-theme/hero');
-    
+
     // Register more blocks here...
     // register_theme_block('team-member', 'my-theme/team-member');
     // register_theme_block('testimonial', 'my-theme/testimonial');
-    
+
 });
 
 /**
@@ -26,40 +26,57 @@ add_action('init', function () {
  * @param string $slug       Block folder name (e.g., 'hero')
  * @param string $block_name Full block name (e.g., 'my-theme/hero')
  */
-function register_theme_block($slug, $block_name) {
+function register_theme_block($slug, $block_name)
+{
     $block_path = "/src/blocks/{$slug}";
     $block_dir = get_theme_file_path($block_path);
-    
-    // 1. Register the editor script (includes style.scss and editor.scss via imports)
+    $is_dev = vite_is_dev_server_running();
+
+    // 1. Register the editor script (main block logic)
     vite_register_asset(
         "{$slug}-editor-script",
-        "{$block_path}/index.jsx",
+        "{$block_path}/index.tsx",
         ['wp-blocks', 'wp-element', 'wp-editor', 'wp-components']
     );
+
+    // 2. Register block styles (frontend + editor)
+    $style_handle = null;
+    $editor_style_handle = null;
     
-    // 2. Register frontend-only view script (if exists)
+    if ($is_dev) {
+        // Dev mode: Register styles directly from Vite dev server.
+        // Vite serves SCSS as raw CSS when fetched via URL (not as a JS module),
+        // so WordPress can inject them as proper <link> tags into the API v3 iframe canvas.
+        if (file_exists("{$block_dir}/style.scss")) {
+            wp_register_style("{$slug}-style", VITE_SERVER . "{$block_path}/style.scss", [], null);
+            $style_handle = "{$slug}-style";
+        }
+        if (file_exists("{$block_dir}/editor.scss")) {
+            wp_register_style("{$slug}-editor-style", VITE_SERVER . "{$block_path}/editor.scss", [], null);
+            $editor_style_handle = "{$slug}-editor-style";
+        }
+    } else {
+        // Production: Load compiled CSS from manifest
+        $style_handle = vite_register_style_from_manifest("{$slug}-style", "{$block_path}/style.scss");
+        $editor_style_handle = vite_register_style_from_manifest("{$slug}-editor-style", "{$block_path}/editor.scss");
+    }
+
+    // 3. Register frontend-only view script (if exists)
     $view_script_handle = null;
-    if (file_exists("{$block_dir}/view.js")) {
+    if (file_exists("{$block_dir}/view.js") || file_exists("{$block_dir}/view.ts")) {
         vite_register_asset(
             "{$slug}-view-script",
             "{$block_path}/view.js",
-            [] // No dependencies needed for simple frontend JS
+            []
         );
         $view_script_handle = "{$slug}-view-script";
     }
-    
-    // 3. Register frontend styles separately for non-editor pages
-    // In dev mode, styles are injected via JS. In production, we need to register CSS.
-    $style_handle = null;
-    if (!vite_is_dev_server_running()) {
-        $style_handle = vite_register_block_style($slug, $block_path);
-    }
-    
+
     // 4. Register the block
     $block_args = [
         'editor_script' => "{$slug}-editor-script",
     ];
-    
+
     if ($view_script_handle) {
         $block_args['view_script'] = $view_script_handle;
     }
@@ -68,6 +85,9 @@ function register_theme_block($slug, $block_name) {
         $block_args['style'] = $style_handle;
     }
     
+    if ($editor_style_handle) {
+        $block_args['editor_style'] = $editor_style_handle;
+    }
+
     register_block_type($block_dir, $block_args);
 }
-

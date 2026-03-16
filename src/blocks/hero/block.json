@@ -1,9 +1,15 @@
 {
-    "apiVersion": 2,
+    "apiVersion": 3,
     "name": "my-theme/hero",
     "title": "Hero Section",
     "category": "theme-blocks",
     "render": "file:./render.php",
+    "supports": {
+        "color": {
+            "background": true,
+            "text": true
+        }
+    },
     "attributes": {
         "title": {
             "type": "string",
@@ -17,10 +23,6 @@
         },
         "imageId": {
             "type": "number"
-        },
-        "backgroundColor": {
-            "type": "string",
-            "default": "#000000"
         }
     }
 }

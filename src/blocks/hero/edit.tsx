@@ -1,46 +1,51 @@
+import React from 'react';
 import { useBlockProps, RichText, MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
 import { Button, PanelBody, TextControl, ColorPicker } from '@wordpress/components';
 
-export default function Edit({ attributes, setAttributes }) {
-    const { title, subtitle, imageUrl, imageId, backgroundColor } = attributes;
+/**
+ * Interfaces
+ */
+export interface HeroAttributes {
+    title: string,
+    subtitle: string,
+    imageUrl: string,
+    imageId: number
+};
+
+// Props
+interface EditProps {
+    attributes: HeroAttributes,
+    setAttributes: (attributes: Partial<HeroAttributes>) => void
+}
+
+export default function Edit({ attributes, setAttributes }: EditProps): JSX.Element {
+
+    const { title, subtitle, imageUrl, imageId } = attributes;
+
     const blockProps = useBlockProps({ className: 'hero-section' });
 
     // Function to handle image selection
-    const onSelectImage = (media) => {
+    const onSelectImage = (media: { url: string; id: number }) => {
         setAttributes({ imageUrl: media.url, imageId: media.id });
     };
 
     return (
-        <section {...blockProps} style={{ backgroundColor: backgroundColor }}>
+        <section {...blockProps}>
             {/* Sidebar Controls */}
             <InspectorControls>
                 <PanelBody title="Hero Title & Subtitle" initialOpen={true}>
                     <TextControl
                         label="Title (Plain Text)"
                         value={title}
-                        onChange={(val) => setAttributes({ title: val })}
+                        onChange={(val: string) => setAttributes({ title: val })}
                         help="Enter the main headline."
                     />
                     <TextControl
                         label="Subtitle (Plain Text)"
                         value={subtitle}
-                        onChange={(val) => setAttributes({ subtitle: val })}
+                        onChange={(val: string) => setAttributes({ subtitle: val })}
                         help="Enter the small text above the headline."
                     />
-                </PanelBody>
-            </InspectorControls>
-
-            <InspectorControls group="styles">
-                <PanelBody title="Hero Background" initialOpen={true}>
-                    <fieldset className="ml-fieldset">
-                        <legend>Background Color</legend>
-                        <ColorPicker
-                            color={backgroundColor}
-                            onChange={(color) => setAttributes({ backgroundColor: color })}
-                            enableAlpha
-                            defaultValue="#000"
-                        />
-                    </fieldset>
                 </PanelBody>
             </InspectorControls>
 
@@ -50,18 +55,18 @@ export default function Edit({ attributes, setAttributes }) {
                     <RichText
                         tagName="h1"
                         value={title}
-                        onChange={(val) => setAttributes({ title: val })}
+                        onChange={(val: string) => setAttributes({ title: val })}
                         placeholder="Enter Hero Title..."
                         allowedFormats={['my-theme/font-weight', 'my-theme/font-accent']}
-                        // disableLineBreaks
+                    // disableLineBreaks
                     />
                     <RichText
                         tagName="p"
                         value={subtitle}
-                        onChange={(val) => setAttributes({ subtitle: val })}
+                        onChange={(val: string) => setAttributes({ subtitle: val })}
                         placeholder="Enter Hero Subtitle..."
                         allowedFormats={['my-theme/font-weight', 'my-theme/font-accent']}
-                        // disableLineBreaks
+                    // disableLineBreaks
                     />
                     {/* <p className="subtitle">{subtitle || 'Add subtitle in sidebar...'}</p> */}
                 </div>

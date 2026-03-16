@@ -167,11 +167,13 @@ export default defineConfig({
                 style: path.resolve(__dirname, 'src/scss/main.scss'),
                 
                 // Block: Hero
-                'block-hero': path.resolve(__dirname, 'src/blocks/hero/index.jsx'),
-                'block-hero-view': path.resolve(__dirname, 'src/blocks/hero/view.js'),
+                'block-hero': path.resolve(__dirname, 'src/blocks/hero/index.tsx'),
+                'block-hero-view': path.resolve(__dirname, 'src/blocks/hero/view.ts'),
+                'block-hero-style': path.resolve(__dirname, 'src/blocks/hero/style.scss'),
+                'block-hero-editor': path.resolve(__dirname, 'src/blocks/hero/editor.scss'),
                 
                 // Add more blocks here...
-                // 'block-team': path.resolve(__dirname, 'src/blocks/team-member/index.jsx'),
+                // 'block-team': path.resolve(__dirname, 'src/blocks/team-member/index.tsx'),
                 // 'block-team-view': path.resolve(__dirname, 'src/blocks/team-member/view.js'),
             },
             output: {

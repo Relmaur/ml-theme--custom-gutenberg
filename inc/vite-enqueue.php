@@ -160,6 +160,33 @@ function vite_register_block_style($slug, $block_path)
     return null;
 }
 
+/**
+ * Register a style from the manifest by entry point name
+ * 
+ * @param string $handle     Style handle
+ * @param string $entry_name Entry name from vite.config.js (e.g., 'block-hero-style')
+ * @return string|null       Style handle or null if not found
+ */
+function vite_register_style_from_manifest($handle, $source_path)
+{
+    $manifest = vite_get_manifest();
+    if (empty($manifest)) return null;
+
+    // Look for the source path in the manifest (strip leading slash — manifest keys never have one)
+    $manifest_key = ltrim($source_path, '/');
+    if (isset($manifest[$manifest_key])) {
+        $entry = $manifest[$manifest_key];
+        
+        // If it's a CSS file entry
+        if (isset($entry['file']) && pathinfo($entry['file'], PATHINFO_EXTENSION) === 'css') {
+            wp_register_style($handle, get_theme_file_uri('/dist/' . $entry['file']));
+            return $handle;
+        }
+    }
+    
+    return null;
+}
+
 // Add type="module" to all Vite-registered scripts (both dev and production)
 add_filter('script_loader_tag', function ($tag, $handle, $src) {
     global $vite_script_handles;

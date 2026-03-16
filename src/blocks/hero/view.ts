@@ -4,15 +4,10 @@
  * This script runs ONLY on the frontend (not in the editor).
  * Use this for animations, interactions, or dynamic behavior.
  */
+document.addEventListener('DOMContentLoaded', (): void => {
+    const heroSections = document.querySelectorAll('.hero-section') as NodeListOf<HTMLElement>;
 
-// Import frontend styles for dev mode (Vite injects CSS via JS during HMR)
-// In production, CSS is extracted and registered separately via PHP
-import './style.scss';
-
-document.addEventListener('DOMContentLoaded', () => {
-    const heroSections = document.querySelectorAll('.hero-section');
-    
-    heroSections.forEach((hero) => {
+    heroSections.forEach((hero): void => {
         // Example: Add fade-in animation on scroll
         const observer = new IntersectionObserver(
             (entries) => {
@@ -24,8 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             },
             { threshold: 0.1 }
-        );
-        
+        ) as IntersectionObserver;
+
         observer.observe(hero);
     });
 });

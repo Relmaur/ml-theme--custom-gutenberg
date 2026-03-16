@@ -6,7 +6,13 @@
     "build": "vite build"
   },
   "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/wordpress__block-editor": "^15.0.5",
+    "@types/wordpress__blocks": "^15.10.2",
+    "@types/wordpress__components": "^23.0.12",
     "sass": "^1.62.0",
+    "typescript": "^5.9.3",
     "vite": "^4.3.0"
   },
   "dependencies": {
