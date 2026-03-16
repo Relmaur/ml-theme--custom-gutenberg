@@ -53,30 +53,42 @@ class BlockRegistry implements Bootable
         ];
 
         // 2. Register frontend-only view script (if it exists)
-        if (file_exists("{$block_dir}/view.js")) {
-            ViteService::enqueueAsset("{$slug}-view-script", "{$block_path}/view.js", [], false);
+        if (file_exists("{$block_dir}/view.ts")) {
+            ViteService::enqueueAsset("{$slug}-view-script", "{$block_path}/view.ts", [], false);
             $block_args['view_script'] = "{$slug}-view-script";
         }
 
-        // 3. Handle Production Block Styles
-        if (!ViteService::isDevServerRunning()) {
-            $manifest = ViteService::getManifest();
-            $view_key = ltrim($block_path, '/') . '/view.js';
-            $index_key = ltrim($block_path, '/') . '/index.tsx';
-
-            $manifest_key = isset($manifest[$view_key]) ? $view_key : (isset($manifest[$index_key]) ? $index_key : null);
-
-            if ($manifest_key && !empty($manifest[$manifest_key]['css'])) {
-                $style_handle = "{$slug}-block-style";
-                foreach ($manifest[$manifest_key]['css'] as $index => $css_file) {
-                    $handle = $index === 0 ? $style_handle : "{$style_handle}-{$index}";
-                    wp_register_style($handle, get_theme_file_uri('/dist/' . $css_file));
+        // 3. Register block style (frontend + editor)
+        $style_source = "{$block_path}/style.scss";
+        if (file_exists(get_theme_file_path($style_source))) {
+            if (ViteService::isDevServerRunning()) {
+                wp_register_style("{$slug}-block-style", ViteService::VITE_SERVER . $style_source);
+            } else {
+                $manifest = ViteService::getManifest();
+                $style_key = ltrim($style_source, '/');
+                if (isset($manifest[$style_key])) {
+                    wp_register_style("{$slug}-block-style", get_theme_file_uri('/dist/' . $manifest[$style_key]['file']));
                 }
-                $block_args['style'] = $style_handle;
             }
+            $block_args['style'] = "{$slug}-block-style";
         }
 
-        // 4. Register the block
+        // 4. Register editor-only style
+        $editor_style_source = "{$block_path}/editor.scss";
+        if (file_exists(get_theme_file_path($editor_style_source))) {
+            if (ViteService::isDevServerRunning()) {
+                wp_register_style("{$slug}-editor-style", ViteService::VITE_SERVER . $editor_style_source);
+            } else {
+                $manifest = ViteService::getManifest();
+                $editor_key = ltrim($editor_style_source, '/');
+                if (isset($manifest[$editor_key])) {
+                    wp_register_style("{$slug}-editor-style", get_theme_file_uri('/dist/' . $manifest[$editor_key]['file']));
+                }
+            }
+            $block_args['editor_style'] = "{$slug}-editor-style";
+        }
+
+        // 5. Register the block
         register_block_type($block_dir, $block_args);
     }
 

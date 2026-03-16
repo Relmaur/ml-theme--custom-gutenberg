@@ -14,7 +14,7 @@ class ViteService
 {
     private const MANIFEST_CACHE_KEY = 'rigid_hybrid_vite_manifest';
     private const MANIFEST_CACHE_GROUP = 'rigid_hybrid_theme';
-    private const VITE_SERVER = 'http://localhost:3000';
+    public const VITE_SERVER = 'http://localhost:3000';
 
     /**
      * Array to keep track of script handles that require type="module".
