@@ -1,15 +1,19 @@
 /*
 Theme Name: Rigid Hybrid
-Theme URI: [https://example.com/rigid-hybrid](https://example.com/rigid-hybrid)
-Author: Your Name
-Author URI: [https://example.com](https://example.com)
-Description: A hybrid WordPress theme using Vite, React blocks, and a classic PHP fallback structure.
+Theme URI: https://github.com/Relmaur/ml-theme--custom-gutenberg
+Author: Marco Lizardo
+Author URI: https://github.com/Relmaur
+Description: A hybrid WordPress theme: classic PHP templates for the page shell, custom React blocks (built with Vite) for the content. Runs as an open block builder, or in an opt-in "rigid" mode where clients only edit content inside fixed layouts.
 Version: 1.0.0
-Requires at least: 6.0
+Requires at least: 6.6
+Tested up to: 7.1
 Requires PHP: 7.4
+License: GPL-3.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Text Domain: rigid-hybrid
 */
 
-/* Global styles are handled via Vite (src/css/main.scss). 
-  This file is primarily for the theme header.
-*/
+/*
+ * WordPress reads the theme header above; this file holds no styles.
+ * Global styles live in src/scss/main.scss and are built by Vite.
+ */

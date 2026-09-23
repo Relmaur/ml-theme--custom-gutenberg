@@ -49,18 +49,17 @@ _Last updated: 2026-09-23_
 
 1. ~~First CI run~~ **Done 2026-09-23:** all 6 jobs passed on PR #1 (`chore/test-suite-vite-8`), including unit and integration tests on PHP 7.4 and 8.4.
 2. ~~Editor smoke test~~ **Done 2026-09-23:** the owner confirmed the Hero, the accent format and color support in the editor and on the frontend.
-3. **`README.md` is stale.** It references `inc/`, `register_theme_block()`, `.jsx` and apiVersion 2.
-4. **Placeholder metadata:**
-   - `style.css` has "Your Name", example.com URIs and `Requires at least: 6.0` (6.6 is really needed).
-   - `package.json` is named `my-hybrid-theme`.
-   - `header.php` has a malformed profile link, and its `<main>`/`<footer>` nesting is off.
-5. **`src/utils/wp-react*.js` are unused.** They're legacy shims, and one lint line is disabled for them. Deleting them needs the owner's OK.
-6. **`npm audit`: 3 moderate advisories**, all in `@types/wordpress__block-editor`'s type-only dependency tree. That code never ships.
-7. **`wp db …` doesn't work locally.** It shells out to the `mysql` client, which can't find Local's socket. Use `wp eval` with `$wpdb`.
+3. ~~Stale README, placeholder metadata, unused `src/utils/`~~ **Done 2026-09-23** (the owner approved):
+   - `README.md` was rewritten.
+   - `style.css` has real metadata and `Requires at least: 6.6`.
+   - `package.json` is named `rigid-hybrid`.
+   - `header.php` no longer has the obsolete profile link, and `<footer>` now sits after `</main>`.
+   - `src/utils/wp-react*.js` were deleted.
+4. **`npm audit`: 3 moderate advisories**, all in `@types/wordpress__block-editor`'s type-only dependency tree. That code never ships.
+5. **`wp db …` doesn't work locally.** It shells out to the `mysql` client, which can't find Local's socket. Use `wp eval` with `$wpdb`.
 
 ## Next steps
 
 1. Owner: review and merge PR #1 (https://github.com/Relmaur/ml-theme--custom-gutenberg/pull/1).
 2. Human review of ADRs 0001–0004, 0006 and 0007.
-3. Rewrite `README.md`, or reduce it to a pointer to `AGENTS.md`. Fix the placeholder metadata.
-4. Decide whether to delete `src/utils/wp-react*.js`.
+3. Replace the placeholder `header.php` / `footer.php` markup (the plain "Header" and "Footer" text) with real site navigation. It could use the registered `primary_menu` / `footer_menu`.

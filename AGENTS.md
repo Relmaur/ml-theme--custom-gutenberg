@@ -8,7 +8,7 @@ Entry point for any AI agent or developer. Read this first, then only the docs r
 |------|-----------|
 | `docs/STATE.md` | **Always, at session start.** Current progress, blockers, next steps. Update it before ending a session. |
 | `docs/adr/` | Before changing build tooling, block architecture, or PHP service structure. |
-| `README.md` | ⚠️ Partly stale (describes the pre-refactor `inc/` layout and `.jsx` blocks). Trust this file and the code over it. |
+| `README.md` | Human-facing overview: setup, modes, deploying. Agents: this file is the more detailed source. |
 
 ## Working mode: this is a learning project
 
@@ -93,7 +93,6 @@ app/                     PSR-4 root (namespace RigidHybrid)
 src/
   js/main.js, scss/main.scss   global frontend entry
   blocks/<slug>/               one folder per block (see "Adding a block"); *.test.ts(x) live next to the code
-  utils/wp-react*.js           shims re-exporting window React/ReactDOM
 theme.json               shared design tokens only (mode settings live in ThemeMode)
 vite.config.js           entries, WP externals shim, JSX (Oxc), Vitest config
 tests/js/                Vitest setup + fake window.wp (wp-globals.tsx)

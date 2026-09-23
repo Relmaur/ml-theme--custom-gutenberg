@@ -1,7 +1,9 @@
 {
-  "name": "my-hybrid-theme",
+  "name": "rigid-hybrid",
   "version": "1.0.0",
+  "description": "Build tooling and tests for the Rigid Hybrid WordPress theme.",
   "private": true,
+  "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
     "dev": "vite",
