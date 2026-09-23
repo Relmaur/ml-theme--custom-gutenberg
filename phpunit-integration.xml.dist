@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Integration tests: a real WordPress (vendor/roots/wordpress-no-content)
+    with this theme active, backed by a DEDICATED test database that the
+    WordPress test suite empties on every run. Never point it at a real site's
+    database. Connection settings: tests/php/.env.testing.example.
+-->
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    bootstrap="tests/php/bootstrap-integration.php"
+    colors="true"
+    beStrictAboutOutputDuringTests="true"
+    failOnRisky="true"
+    failOnWarning="true"
+    cacheResultFile=".phpunit.cache/integration.result.cache"
+>
+    <testsuites>
+        <testsuite name="integration">
+            <directory>tests/php/Integration</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage>
+        <include>
+            <directory suffix=".php">app</directory>
+            <directory suffix=".php">src/blocks</directory>
+        </include>
+    </coverage>
+</phpunit>

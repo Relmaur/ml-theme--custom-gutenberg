@@ -8,9 +8,9 @@ use RigidHybrid\Core\Bootable;
 
 /**
  * Class ThemeSetup
- * 
+ *
  * Handles the foundational WordPress theme support features and menu registrations.
- * 
+ *
  * @package RigidHybrid\Setup
  */
 
@@ -18,7 +18,7 @@ class ThemeSetup implements Bootable
 {
     /**
      * Register theme setup actions.
-     * 
+     *
      * @return void
      */
     public function register(): void
@@ -28,8 +28,8 @@ class ThemeSetup implements Bootable
 
     /**
      * Hook callback: Define theme supports and menus.
-     * 
-     * @return void 
+     *
+     * @return void
      */
     public function setupTheme(): void
     {

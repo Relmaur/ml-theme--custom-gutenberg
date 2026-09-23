@@ -13,5 +13,53 @@
         "psr-4": {
             "RigidHybrid\\": "app/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "RigidHybrid\\Tests\\": "tests/php/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "7.4.33"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "require-dev": {
+        "wp-phpunit/wp-phpunit": "^7.1",
+        "yoast/phpunit-polyfills": "^4.0",
+        "roots/wordpress-no-content": "^7.1",
+        "phpunit/phpunit": "^9.6",
+        "brain/monkey": "^2.7",
+        "phpstan/phpstan": "^2.2",
+        "phpstan/extension-installer": "^1.4",
+        "szepeviktor/phpstan-wordpress": "^2.0",
+        "wp-coding-standards/wpcs": "^3.4",
+        "phpcompatibility/phpcompatibility-wp": "^2.1.8",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+    },
+    "scripts": {
+        "lint": "phpcs",
+        "lint:fix": "phpcbf",
+        "analyse": "phpstan analyse --memory-limit=1G",
+        "test": "@test:unit",
+        "test:unit": "phpunit",
+        "test:integration": "phpunit -c phpunit-integration.xml.dist",
+        "check": [
+            "@lint",
+            "@analyse",
+            "@test:unit",
+            "@test:integration"
+        ]
+    },
+    "scripts-descriptions": {
+        "lint": "PHP_CodeSniffer: PSR-12 + WordPress security rules + PHP 7.4 compatibility.",
+        "analyse": "PHPStan at max level.",
+        "test:unit": "Fast unit tests (no WordPress; Brain Monkey mocks).",
+        "test:integration": "Tests against a real WordPress + test database (see tests/php/.env.testing.example).",
+        "check": "Everything CI runs for PHP."
     }
 }
