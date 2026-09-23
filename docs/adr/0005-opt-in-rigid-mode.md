@@ -50,4 +50,4 @@ A new Bootable service, `RigidHybrid\Setup\ThemeMode`, owns the mode.
 
 ## Updates
 
-- **2026-09-23, ADR 0008:** rigid mode no longer applies to every post type. By default it covers only **`page`**, and the `rigid_hybrid/rigid_post_types` filter can widen or narrow that. Posts and data post types (e.g. taw/core's) keep the normal editor. The design locks (theme.json) stay site-wide. Longer term, per-post-type editing policies move into taw/core, and rigid mode becomes a preset of them.
+- **2026-09-23, ADR 0008:** rigid mode no longer applies to every post type. By default it covers only **`page`**, and the `rigid_hybrid/rigid_post_types` filter can widen or narrow that. Other post types (e.g. blog posts) keep the normal editor. The design locks (theme.json) stay site-wide.

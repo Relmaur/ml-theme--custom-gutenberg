@@ -1,6 +1,6 @@
 # 0008. Rigid mode per post type, then editing policies in taw/core
 
-- **Status:** Accepted (owner approved on 2026-09-23). Part 1 is implemented. Part 2 is planned in taw/core.
+- **Status:** Accepted (owner approved on 2026-09-23). Part 1 is implemented here. Part 2 moved to taw/core for the new `taw-gutenberg` theme and **no longer applies to this theme** (see the update at the end).
 - **Date:** 2026-09-23
 - **Amends:** ADR 0005 (the "Everything is rigid" scope)
 
@@ -56,3 +56,11 @@ It's booted by **its own switch**, not `Boot::data()`, so a data-only site never
   - integration: pages locked, posts open, filter adds a type
 - taw-13 (the TAW umbrella session) has been asked to add "editing policies" to the taw/core roadmap, before or alongside Phase 4, with a taw/core ADR.
 - When Part 2 lands, the `rigid_hybrid/rigid_post_types` filter keeps working (or is deprecated with a fallback), because sites may rely on it.
+
+## Update (2026-09-23): plan change
+
+The owner decided this theme will **not** become a taw/core consumer. The Gutenberg consumer is a new theme, `taw-gutenberg`. So:
+
+- **Part 1 stays** as this theme's final design. Rigid mode covers the `rigid_hybrid/rigid_post_types` list (default `['page']`), and that fixes ADR 0005's "blog posts can only contain a Hero" problem regardless of taw/core. The filter is the permanent way to configure the scope here.
+- **Part 2 is now taw/core roadmap item E** (its own ADR and boot switch, before or alongside Phase 4). It will be adopted by taw-gutenberg, not by this theme. `ThemeMode` will **not** become a preset of it. This theme's `ThemeMode.php` and tests remain the reference implementation.
+- Mentions of taw/core's `book` post type above are historical context: they explain why the scoping was needed.
