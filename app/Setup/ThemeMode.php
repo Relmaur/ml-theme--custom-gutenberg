@@ -49,7 +49,7 @@ final class ThemeMode implements Bootable
     /**
      * Post types rigid mode locks down unless the `rigid_hybrid/rigid_post_types`
      * filter says otherwise. Pages are the layouts clients shouldn't break;
-     * posts and data post types (e.g. taw/core's) keep the normal editor.
+     * posts and any custom post types keep the normal editor.
      * See ADR 0008.
      */
     private const DEFAULT_RIGID_POST_TYPES = ['page'];
@@ -178,8 +178,7 @@ final class ThemeMode implements Bootable
     /**
      * The post types rigid mode applies to.
      *
-     * Filterable so a site can lock more types (e.g. add 'post') or fewer.
-     * This is a stopgap until taw/core owns per-post-type editing policies
+     * Filterable so a site can lock more types (e.g. add 'post') or fewer
      * (ADR 0008). The filter value is untrusted: non-strings are dropped, and
      * anything that isn't an array falls back to the default.
      *
