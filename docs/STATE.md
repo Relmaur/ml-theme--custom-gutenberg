@@ -47,7 +47,7 @@ _Last updated: 2026-09-23_
 
 ## Known issues and blockers
 
-1. **First CI run is on the PR** for branch `chore/test-suite-vite-8`. The PHP 7.4 legs were only proven by static checks before this, because only PHP 8.4 is installed locally.
+1. ~~First CI run~~ **Done 2026-09-23:** all 6 jobs passed on PR #1 (`chore/test-suite-vite-8`), including unit and integration tests on PHP 7.4 and 8.4.
 2. ~~Editor smoke test~~ **Done 2026-09-23:** the owner confirmed the Hero, the accent format and color support in the editor and on the frontend.
 3. **`README.md` is stale.** It references `inc/`, `register_theme_block()`, `.jsx` and apiVersion 2.
 4. **Placeholder metadata:**
@@ -60,7 +60,7 @@ _Last updated: 2026-09-23_
 
 ## Next steps
 
-1. Watch the first CI run on the PR. Fix anything that fails only on CI (PHP 7.4, the MySQL service), then merge.
+1. Owner: review and merge PR #1 (https://github.com/Relmaur/ml-theme--custom-gutenberg/pull/1).
 2. Human review of ADRs 0001–0004, 0006 and 0007.
 3. Rewrite `README.md`, or reduce it to a pointer to `AGENTS.md`. Fix the placeholder metadata.
 4. Decide whether to delete `src/utils/wp-react*.js`.
