@@ -47,3 +47,7 @@ A new Bootable service, `RigidHybrid\Setup\ThemeMode`, owns the mode.
 - A theme blocks-only setup means more theme blocks are needed before rigid mode can hold general content (text section, image, CTA…).
 - `AGENTS.md` rule 5 ("Rigid editing") now applies only in rigid mode. Block code should still restrict `RichText` formats, because blocks behave the same in both modes.
 - Later extensions (not built now, YAGNI): a per-post-type scope, a custom `rigid_hybrid_edit_layout` capability, per-page-template layouts.
+
+## Updates
+
+- **2026-09-23, ADR 0008:** rigid mode no longer applies to every post type. By default it covers only **`page`**, and the `rigid_hybrid/rigid_post_types` filter can widen or narrow that. Posts and data post types (e.g. taw/core's) keep the normal editor. The design locks (theme.json) stay site-wide. Longer term, per-post-type editing policies move into taw/core, and rigid mode becomes a preset of them.

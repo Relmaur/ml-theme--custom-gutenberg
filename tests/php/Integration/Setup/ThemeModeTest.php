@@ -108,12 +108,30 @@ final class ThemeModeTest extends WP_UnitTestCase
         }
     }
 
-    public function testRigidModeAppliesToEveryPostType(): void
+    public function testRigidModeLeavesOtherPostTypesWithTheNormalEditor(): void
     {
+        // e.g. blog posts, or a data post type like taw/core's `book` (ADR 0008).
         $this->switchToMode(ThemeMode::RIGID);
-        $post = self::factory()->post->create_and_get(['post_type' => 'post']);
+        wp_set_current_user(self::factory()->user->create(['role' => 'editor']));
+        $post = self::factory()->post->create_and_get(['post_type' => 'post', 'post_status' => 'auto-draft']);
+        $context = $this->editorContextFor($post);
 
-        self::assertSame(['my-theme/hero'], get_allowed_block_types($this->editorContextFor($post)));
+        self::assertTrue(get_allowed_block_types($context));
+        $settings = get_block_editor_settings([], $context);
+        self::assertArrayNotHasKey('templateLock', $settings);
+        self::assertArrayNotHasKey('template', $settings);
+    }
+
+    public function testSitesCanAddPostTypesToRigidMode(): void
+    {
+        add_filter('rigid_hybrid/rigid_post_types', static fn (array $types): array => [...$types, 'post']);
+        $this->switchToMode(ThemeMode::RIGID);
+        wp_set_current_user(self::factory()->user->create(['role' => 'editor']));
+        $post = self::factory()->post->create_and_get(['post_type' => 'post']);
+        $context = $this->editorContextFor($post);
+
+        self::assertSame(['my-theme/hero'], get_allowed_block_types($context));
+        self::assertSame('all', get_block_editor_settings([], $context)['templateLock']);
     }
 
     public function testRigidModeLeavesEditorsWithoutAPostAlone(): void

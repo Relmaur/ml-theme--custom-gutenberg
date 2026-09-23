@@ -7,9 +7,9 @@ One theme, two ways to hand it to a client:
 | Mode | For clients who… | What editors get |
 |------|------------------|------------------|
 | **builder** (default) | want to build their own pages | Core blocks + theme blocks, full design tools |
-| **rigid** (opt-in) | just want to update text and images | Only theme blocks, brand palette only, and a **locked layout** for everyone below Administrator |
+| **rigid** (opt-in) | just want to update text and images | On pages: only theme blocks and a **locked layout** for everyone below Administrator. Site-wide: brand palette only |
 
-In rigid mode, an Administrator arranges each page once. Editors can then change the content and images inside it, but can't add, move or remove blocks.
+In rigid mode, an Administrator arranges each page once. Editors can then change the content and images inside it, but can't add, move or remove blocks. Other post types (blog posts, data post types) keep the normal editor.
 
 ---
 
@@ -41,7 +41,15 @@ The mode is set per install in `wp-config.php`, so a client can't switch it by a
 define('RIGID_HYBRID_MODE', 'rigid');   // omit (or 'builder') for the open block builder
 ```
 
-Any other value falls back to `builder` and shows a notice when `WP_DEBUG` is on. Child themes or mu-plugins can also override the mode through the `rigid_hybrid/mode` filter. Details: [ADR 0005](docs/adr/0005-opt-in-rigid-mode.md).
+Any other value falls back to `builder` and shows a notice when `WP_DEBUG` is on. Child themes or mu-plugins can also override the mode through the `rigid_hybrid/mode` filter.
+
+Rigid mode locks **pages** by default. To lock other post types too (or fewer), use a filter:
+
+```php
+add_filter('rigid_hybrid/rigid_post_types', fn (array $types) => [...$types, 'post']);
+```
+
+Details: [ADR 0005](docs/adr/0005-opt-in-rigid-mode.md) and [ADR 0008](docs/adr/0008-rigid-mode-per-post-type-and-taw-core-editing-policies.md).
 
 ## Development
 
@@ -115,7 +123,7 @@ Ship the theme folder without `node_modules/`, `tests/` or `src/**/*.test.*`. Th
 | "Composer dependencies not installed" | Run `composer install` in the theme folder. |
 | Block missing from the editor in production | Its files aren't in `vite.config.js` inputs, or `npm run build` wasn't run. |
 | A `@wordpress/*` component is `undefined` | Add its name to `wpExportNames` in `vite.config.js`. |
-| Only the Hero block can be inserted | The site is in rigid mode (`RIGID_HYBRID_MODE`). |
+| Only the Hero block can be inserted | The site is in rigid mode (`RIGID_HYBRID_MODE`) and this post type is rigid (default: pages). |
 | Editors can't add or move blocks | Rigid mode locks layouts below Administrator; that's intended. |
 
 ## Further reading

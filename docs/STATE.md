@@ -89,7 +89,11 @@ PHPUnit 9.6 was only chosen because of PHP 7.4. Consider moving to a newer PHPUn
 - `tests/php/Unit/ThemeTest` creates EVERY service in `Theme::$services` under Brain Monkey (no WordPress). A new `Bootable` that calls `Boot::data()` directly in `register()` would run real taw/core code in unit tests. Instead, hook the call to an action (e.g. `after_setup_theme`) so `register()` only adds hooks, as ADR 0003 in this repo requires.
 - Production deploys use `composer install --no-dev` (README), so taw/core must be in `require`, not `require-dev`.
 
-**Rigid mode vs. taw data (open design question: needs a decision and an ADR update).**
+**Rigid mode vs. taw data: ✅ DECIDED 2026-09-23 (ADR 0008).**
+- Part 1 is done: rigid mode only covers the `rigid_hybrid/rigid_post_types` list (default `['page']`), so a `book` post type gets the normal editor.
+- Part 2 is planned in taw/core: per-post-type editing policies with their own boot switch, after which rigid mode becomes a preset. taw-13 was asked to add this to the roadmap.
+
+Original analysis, kept for context:
 
 ADR 0005 makes rigid mode apply to EVERY post type. Rigid mode currently:
 - allows only `my-theme/*` blocks
@@ -127,4 +131,5 @@ Likely fix: make rigid mode's post types configurable (the "later extension" not
 
 1. Human review of ADRs 0001–0004, 0006 and 0007.
 2. Replace the placeholder `header.php` / `footer.php` markup (the plain "Header" and "Footer" text) with real site navigation. It could use the registered `primary_menu` / `footer_menu`.
-3. When taw-13 starts Step 5: settle the rigid-mode vs. data-post-types question first (see above).
+3. Owner: review and merge the `feat/rigid-mode-post-types` PR (ADR 0008 Part 1 + the STATE notes).
+4. When taw-13 starts Step 5: the rigid-mode conflict is already solved (ADR 0008). Follow the checklist above.
