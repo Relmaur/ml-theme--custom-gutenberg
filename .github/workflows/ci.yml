@@ -1,0 +1,112 @@
+# Runs every check on each push and pull request. Each job mirrors an npm or
+# composer script, so a failure here can be reproduced locally with the same
+# command (see AGENTS.md → Commands).
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+# Least privilege: CI only needs to read the code.
+permissions:
+  contents: read
+
+# A new push to the same branch/PR cancels the now-outdated run.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  js:
+    name: JS (lint, types, tests, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm run test:coverage
+      - run: npm run build
+
+  php-quality:
+    name: PHP (PHPCS, PHPStan)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: composer:v2
+
+      - run: composer install --no-interaction --no-progress
+      - run: composer lint
+      - run: composer analyse
+
+  php-unit:
+    name: PHP unit (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The theme's minimum ("Requires PHP: 7.4") and the newest supported.
+        php: ['7.4', '8.4']
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:v2
+
+      - run: composer install --no-interaction --no-progress
+      - run: composer test:unit
+
+  php-integration:
+    name: PHP integration (PHP ${{ matrix.php }}, WordPress + MySQL)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.4']
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wp_tests
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      # Read by tests/php/wp-tests-config.php (same names as .env.testing.example).
+      WP_TESTS_DB_NAME: wp_tests
+      WP_TESTS_DB_USER: root
+      WP_TESTS_DB_PASSWORD: root
+      WP_TESTS_DB_HOST: 127.0.0.1:3306
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysqli
+          coverage: none
+          tools: composer:v2
+
+      - run: composer install --no-interaction --no-progress
+      - run: composer test:integration

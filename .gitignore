@@ -31,3 +31,11 @@ npm-debug.log*
 
 # Optional: Package lock (uncomment if you prefer not to track it)
 # package-lock.json
+
+# Test & tooling caches / reports
+coverage/
+.phpunit.cache/
+.phpunit.result.cache
+
+# Local integration-test DB settings (see tests/php/.env.testing.example)
+tests/php/.env.testing
