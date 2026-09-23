@@ -1,0 +1,16 @@
+{
+    "tabWidth": 4,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "printWidth": 120,
+    "overrides": [
+        {
+            "files": ["*.json", "*.yml", "*.yaml"],
+            "options": { "tabWidth": 2 }
+        },
+        {
+            "files": ["theme.json", "block.json", "composer.json", "tsconfig.json", ".prettierrc.json"],
+            "options": { "tabWidth": 4 }
+        }
+    ]
+}

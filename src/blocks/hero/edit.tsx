@@ -1,25 +1,26 @@
 import React from 'react';
 import { useBlockProps, RichText, MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
-import { Button, PanelBody, TextControl, ColorPicker } from '@wordpress/components';
+import { PanelBody, TextControl } from '@wordpress/components';
 
 /**
- * Interfaces
+ * Block attributes (mirrors block.json).
+ * A `type` rather than an `interface`: registerBlockType requires attributes to
+ * be assignable to Record<string, unknown>, which interfaces are not.
  */
-export interface HeroAttributes {
-    title: string,
-    subtitle: string,
-    imageUrl: string,
-    imageId: number
+export type HeroAttributes = {
+    title: string;
+    subtitle: string;
+    imageUrl: string;
+    imageId: number;
 };
 
 // Props
 interface EditProps {
-    attributes: HeroAttributes,
-    setAttributes: (attributes: Partial<HeroAttributes>) => void
+    attributes: HeroAttributes;
+    setAttributes: (attributes: Partial<HeroAttributes>) => void;
 }
 
 export default function Edit({ attributes, setAttributes }: EditProps): JSX.Element {
-
     const { title, subtitle, imageUrl, imageId } = attributes;
 
     const blockProps = useBlockProps({ className: 'hero-section' });
@@ -58,7 +59,7 @@ export default function Edit({ attributes, setAttributes }: EditProps): JSX.Elem
                         onChange={(val: string) => setAttributes({ title: val })}
                         placeholder="Enter Hero Title..."
                         allowedFormats={['my-theme/font-weight', 'my-theme/font-accent']}
-                    // disableLineBreaks
+                        // disableLineBreaks
                     />
                     <RichText
                         tagName="p"
@@ -66,7 +67,7 @@ export default function Edit({ attributes, setAttributes }: EditProps): JSX.Elem
                         onChange={(val: string) => setAttributes({ subtitle: val })}
                         placeholder="Enter Hero Subtitle..."
                         allowedFormats={['my-theme/font-weight', 'my-theme/font-accent']}
-                    // disableLineBreaks
+                        // disableLineBreaks
                     />
                     {/* <p className="subtitle">{subtitle || 'Add subtitle in sidebar...'}</p> */}
                 </div>

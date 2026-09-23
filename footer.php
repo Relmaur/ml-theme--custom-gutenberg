@@ -1,8 +1,8 @@
-<footer>
-    Footer
-</footer>
-</main>
-<!-- #page -->
+    </main>
+
+    <footer>
+        Footer
+    </footer>
 
 <?php wp_footer(); ?>
 

@@ -1,9 +1,7 @@
 {
     "version": 3,
     "settings": {
-        "appearanceTools": false,
         "color": {
-            "custom": false,
             "palette": [
                 {
                     "slug": "primary",
@@ -16,10 +14,6 @@
                     "name": "Brand Orange"
                 }
             ]
-        },
-        "typography": {
-            "customFontSize": false,
-            "dropCap": false
         },
         "layout": {
             "contentSize": "800px",

@@ -1,0 +1,20 @@
+# PHPStan: static analysis (finds type bugs without running the code).
+# WordPress functions/classes are known through szepeviktor/phpstan-wordpress,
+# which the extension installer loads automatically.
+parameters:
+    # "max" = strictest. New code must keep passing at this level.
+    level: max
+
+    # The theme declares "Requires PHP: 7.4", so flag anything newer.
+    phpVersion:
+        min: 70400
+        max: 80499
+
+    paths:
+        - app
+        - functions.php
+        - src/blocks
+
+    # Defined per install in wp-config.php (ADR 0005), so its value is unknown here.
+    dynamicConstantNames:
+        - RIGID_HYBRID_MODE

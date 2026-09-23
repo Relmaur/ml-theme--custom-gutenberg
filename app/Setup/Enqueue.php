@@ -9,7 +9,7 @@ use RigidHybrid\Services\ViteService;
  * Class Enqueue
  *
  * Handles enqueuing global theme scripts and styles,
- * and filtering script tags for ES modules.
+ * and marking Vite scripts as ES modules.
  *
  * @package RigidHybrid\Setup
  */
@@ -21,7 +21,7 @@ class Enqueue implements Bootable
     public function register(): void
     {
         add_action('wp_enqueue_scripts', [$this, 'enqueueFrontendAssets']);
-        add_filter('script_loader_tag', [$this, 'filterScriptTags'], 10, 3);
+        add_filter('wp_script_attributes', [$this, 'addModuleType']);
     }
 
     /**
@@ -37,16 +37,28 @@ class Enqueue implements Bootable
     /**
      * Add type="module" to scripts loaded via Vite.
      *
-     * @param string $tag    The `<script>` tag for the enqueued script.
-     * @param string $handle The script's registered handle.
-     * @param string $src    The script's source URL.
-     * @return string
+     * Vite outputs ES modules, which browsers only run with type="module".
+     * We change just that attribute (instead of rewriting the whole tag in
+     * `script_loader_tag`), so WordPress keeps the tag's id and any inline
+     * scripts or translations attached to the handle.
+     *
+     * @param array<string, mixed> $attributes Attributes of the <script> tag being printed.
+     * @return array<string, mixed>
      */
-    public function filterScriptTags(string $tag, string $handle, string $src): string
+    public function addModuleType(array $attributes): array
     {
-        if (in_array($handle, ViteService::$moduleHandles, true)) {
-            return '<script type="module" src="' . esc_url($src) . '"></script>';
+        // WordPress sets id="{$handle}-js" on enqueued scripts; that's the only
+        // link back to the handle this filter gets.
+        $id = $attributes['id'] ?? null;
+        if (!is_string($id) || substr($id, -3) !== '-js') {
+            return $attributes;
         }
-        return $tag;
+
+        $handle = substr($id, 0, -3);
+        if (in_array($handle, ViteService::$moduleHandles, true)) {
+            $attributes['type'] = 'module';
+        }
+
+        return $attributes;
     }
 }

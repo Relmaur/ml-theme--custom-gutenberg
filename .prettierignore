@@ -1,0 +1,10 @@
+# Generated
+dist/
+coverage/
+vendor/
+node_modules/
+package-lock.json
+composer.lock
+
+# Prose: formatted by hand
+*.md

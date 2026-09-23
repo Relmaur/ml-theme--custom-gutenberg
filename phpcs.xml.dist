@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<!--
+    PHP_CodeSniffer rules for the Rigid Hybrid theme.
+
+    Formatting follows PSR-12 (the codebase uses 4 spaces and PSR-4 class
+    names), not WordPress Core style (tabs, snake_case methods, class-*.php
+    files). From the WordPress Coding Standards we take the rules that catch
+    real WordPress bugs: escaping, sanitizing, nonces, i18n and prefixing.
+-->
+<ruleset name="Rigid Hybrid">
+    <description>PSR-12 formatting + WordPress security/API rules + PHP 7.4 compatibility.</description>
+
+    <file>app</file>
+    <file>src/blocks</file>
+    <file>tests/php</file>
+    <file>functions.php</file>
+    <file>header.php</file>
+    <file>footer.php</file>
+    <file>index.php</file>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+    <arg name="parallel" value="8"/>
+
+    <!-- The theme header declares "Requires PHP: 7.4". -->
+    <config name="testVersion" value="7.4-"/>
+    <!-- block.json apiVersion 3 + theme.json v3 need WordPress 6.6+. -->
+    <config name="minimum_wp_version" value="6.6"/>
+
+    <!-- Formatting -->
+    <rule ref="PSR12"/>
+
+    <!-- Code that won't run on PHP 7.4 or on the minimum WordPress version -->
+    <rule ref="PHPCompatibilityWP"/>
+
+    <!-- WordPress: the rules that prevent real bugs -->
+    <rule ref="WordPress.Security"/>
+    <rule ref="WordPress.DB"/>
+    <rule ref="WordPress.WP">
+        <!-- Reading our own build manifest from disk is fine; this sniff is
+             about fetching remote URLs with file_get_contents(). -->
+        <exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents"/>
+    </rule>
+    <rule ref="WordPress.CodeAnalysis"/>
+    <rule ref="WordPress.PHP">
+        <!-- Style preference; the codebase doesn't use Yoda conditions. -->
+        <exclude name="WordPress.PHP.YodaConditions"/>
+        <!-- Deprecated in WPCS 3.3 (PHPCompatibility covers it). -->
+        <exclude name="WordPress.PHP.POSIXFunctions"/>
+    </rule>
+
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="rigid-hybrid"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Globals (hooks, functions, constants) must be prefixed to avoid clashes. -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="rigid_hybrid"/>
+                <element value="RigidHybrid"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Block render templates are included INSIDE a function by WordPress, so
+         their variables are local, not globals. -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
+        <exclude-pattern>src/blocks/*/render.php</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.WP.GlobalVariablesOverride.Prohibited">
+        <exclude-pattern>src/blocks/*/render.php</exclude-pattern>
+    </rule>
+
+    <!-- Vite puts a content hash in every built file name, which already busts
+         caches; a ?ver= query string would add nothing. -->
+    <rule ref="WordPress.WP.EnqueuedResourceParameters.MissingVersion">
+        <exclude-pattern>app/Services/ViteService.php</exclude-pattern>
+    </rule>
+
+    <!-- Tests never run inside a live site: WordPress runtime rules (prefixes,
+         WP_Filesystem, putenv) don't apply, and bootstrap/config files must
+         both define constants and run code. -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <exclude-pattern>tests/php/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.WP.AlternativeFunctions">
+        <exclude-pattern>tests/php/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.PHP.DiscouragedPHPFunctions">
+        <exclude-pattern>tests/php/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.WP.GlobalVariablesOverride">
+        <exclude-pattern>tests/php/*</exclude-pattern>
+    </rule>
+    <!-- WP_UnitTestCase's hooks are snake_case (set_up, tear_down). -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName">
+        <exclude-pattern>tests/php/Integration/*</exclude-pattern>
+    </rule>
+    <rule ref="PSR1.Files.SideEffects">
+        <exclude-pattern>tests/php/bootstrap-*.php</exclude-pattern>
+        <exclude-pattern>tests/php/wp-tests-config.php</exclude-pattern>
+    </rule>
+</ruleset>

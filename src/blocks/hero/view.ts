@@ -1,6 +1,6 @@
 /**
  * Hero Block - Frontend JavaScript
- * 
+ *
  * This script runs ONLY on the frontend (not in the editor).
  * Use this for animations, interactions, or dynamic behavior.
  */
@@ -18,9 +18,13 @@ document.addEventListener('DOMContentLoaded', (): void => {
                     }
                 });
             },
-            { threshold: 0.1 }
+            { threshold: 0.1 },
         ) as IntersectionObserver;
 
         observer.observe(hero);
     });
 });
+
+// Marks this file as an ES module (it's loaded with <script type="module">),
+// which also lets tests import it.
+export {};

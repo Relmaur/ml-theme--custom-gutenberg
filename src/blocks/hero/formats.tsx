@@ -1,10 +1,21 @@
-// Access WordPress globals directly since Vite externals don't export all named exports
-const { registerFormatType, toggleFormat, applyFormat, removeFormat } = wp.richText;
-const { RichTextToolbarButton } = wp.blockEditor;
-const { useState } = wp.element;
-const { Button, Popover, Fill } = wp.components;
+import React, { useState } from 'react';
+import { registerFormatType, toggleFormat, applyFormat, removeFormat } from '@wordpress/rich-text';
+import type { RichTextValue } from '@wordpress/rich-text';
+import { RichTextToolbarButton } from '@wordpress/block-editor';
+import { Button, Popover } from '@wordpress/components';
 
-const HighlightButton = ({ isActive, onChange, value }) => {
+/**
+ * Props WordPress passes to a format's `edit` component.
+ * (@wordpress/rich-text types `edit` as a bare Function, so we define them.)
+ */
+interface FormatEditProps {
+    isActive: boolean;
+    value: RichTextValue;
+    onChange: (value: RichTextValue) => void;
+    contentRef?: React.RefObject<HTMLElement>;
+}
+
+const HighlightButton = ({ isActive, onChange, value }: FormatEditProps) => {
     return (
         <>
             {/* Button in the dropdown */}
@@ -16,7 +27,7 @@ const HighlightButton = ({ isActive, onChange, value }) => {
                     onChange(
                         toggleFormat(value, {
                             type: 'my-theme/highlight',
-                        })
+                        }),
                     );
                 }}
             />
@@ -33,8 +44,11 @@ registerFormatType('my-theme/highlight', {
 });
 
 // Font Weight Button with Popover
-const FontWeightButton = ({ isActive, onChange, value, contentRef }) => {
+const FontWeightButton = ({ isActive, onChange, value, contentRef }: FormatEditProps) => {
     const [isOpen, setIsOpen] = useState(false);
+    // The element the popover points at. Read from the ref in the click handler:
+    // reading `ref.current` during render won't re-render when the ref changes.
+    const [anchor, setAnchor] = useState<HTMLElement | null>(null);
 
     const fontWeights = [
         { label: 'Thin (100)', value: '100' },
@@ -48,7 +62,8 @@ const FontWeightButton = ({ isActive, onChange, value, contentRef }) => {
         { label: 'Black (900)', value: '900' },
     ];
 
-    const applyFontWeight = (weight) => {
+    // `null` removes the weight format from the selection.
+    const applyFontWeight = (weight: string | null) => {
         if (weight) {
             onChange(
                 applyFormat(value, {
@@ -57,7 +72,7 @@ const FontWeightButton = ({ isActive, onChange, value, contentRef }) => {
                         style: `font-weight: ${weight}`,
                         'data-weight': weight,
                     },
-                })
+                }),
             );
         } else {
             onChange(removeFormat(value, 'my-theme/font-weight'));
@@ -71,19 +86,20 @@ const FontWeightButton = ({ isActive, onChange, value, contentRef }) => {
                 icon="editor-bold"
                 title="Font Weight"
                 isActive={isActive}
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => {
+                    setAnchor(contentRef?.current ?? null);
+                    setIsOpen(!isOpen);
+                }}
             />
             {isOpen && (
                 <Popover
                     placement="top-start"
                     onClose={() => setIsOpen(false)}
                     className="my-theme-font-weight-popover"
-                    anchor={contentRef?.current}
+                    anchor={anchor}
                 >
                     <div style={{ padding: '12px', minWidth: '180px' }}>
-                        <p style={{ marginTop: 0, marginBottom: '8px', fontWeight: 600 }}>
-                            Select Font Weight
-                        </p>
+                        <p style={{ marginTop: 0, marginBottom: '8px', fontWeight: 600 }}>Select Font Weight</p>
                         {fontWeights.map((fw) => (
                             <Button
                                 key={fw.value}
@@ -115,7 +131,12 @@ const FontWeightButton = ({ isActive, onChange, value, contentRef }) => {
     );
 };
 
-registerFormatType('my-theme/font-weight', {
+// WordPress supports `attributes` on formats at runtime, but its WPFormat type
+// omits it. Typing the settings separately (instead of an inline object) lets
+// us declare the extra field without an `as any` cast.
+const fontWeightFormat: Parameters<typeof registerFormatType>[1] & {
+    attributes: Record<string, string>;
+} = {
     title: 'Font Weight',
     tagName: 'span',
     className: 'text-weight',
@@ -124,9 +145,11 @@ registerFormatType('my-theme/font-weight', {
         'data-weight': 'data-weight',
     },
     edit: FontWeightButton,
-});
+};
 
-const AccentButton = ({ isActive, onChange, value }) => {
+registerFormatType('my-theme/font-weight', fontWeightFormat);
+
+const AccentButton = ({ isActive, onChange, value }: FormatEditProps) => {
     return (
         <RichTextToolbarButton
             icon="editor-italic"
@@ -136,7 +159,7 @@ const AccentButton = ({ isActive, onChange, value }) => {
                 onChange(
                     toggleFormat(value, {
                         type: 'my-theme/font-accent',
-                    })
+                    }),
                 );
             }}
         />
