@@ -47,19 +47,29 @@ _Last updated: 2026-09-23_
 
 ## Known issues and blockers
 
-1. ~~First CI run~~ **Done 2026-09-23:** all 6 jobs passed on PR #1 (`chore/test-suite-vite-8`), including unit and integration tests on PHP 7.4 and 8.4.
-2. ~~Editor smoke test~~ **Done 2026-09-23:** the owner confirmed the Hero, the accent format and color support in the editor and on the frontend.
-3. ~~Stale README, placeholder metadata, unused `src/utils/`~~ **Done 2026-09-23** (the owner approved):
-   - `README.md` was rewritten.
-   - `style.css` has real metadata and `Requires at least: 6.6`.
-   - `package.json` is named `rigid-hybrid`.
-   - `header.php` no longer has the obsolete profile link, and `<footer>` now sits after `</main>`.
-   - `src/utils/wp-react*.js` were deleted.
-4. **`npm audit`: 3 moderate advisories**, all in `@types/wordpress__block-editor`'s type-only dependency tree. That code never ships.
-5. **`wp db …` doesn't work locally.** It shells out to the `mysql` client, which can't find Local's socket. Use `wp eval` with `$wpdb`.
+1. **`npm audit`: 3 moderate advisories**, all in `@types/wordpress__block-editor`'s type-only dependency tree. That code never ships.
+2. **`wp db …` doesn't work locally.** It shells out to the `mysql` client, which can't find Local's socket. Use `wp eval` with `$wpdb`.
+
+History: PR #1 (rigid mode, Vite 8, test suite, cleanup) was merged into `master` on 2026-09-23 with all 6 CI jobs green.
+
+## taw/core: this theme is NOT a consumer (updated 2026-09-23)
+
+The TAW plan changed. This theme stays a standalone learning project:
+- no rename
+- no PHP 8.2 bump
+- no `taw/core`
+- no block migration
+
+The Gutenberg consumer of taw/core is a **new** theme, `taw-gutenberg` (repo `Relmaur/taw-gutenberg`, a TAW umbrella submodule, run on the `taw` Local site). It's built fresh and doesn't copy this theme.
+
+What this theme contributed:
+- the rigid-mode analysis
+- the "editing policies" proposal, now item E on the taw/core roadmap (taw-gutenberg adopts it first)
+
+This theme's `ThemeMode.php` and its tests are the reference implementation. The PHP 7.4 minimum, the `RigidHybrid\` namespace and the `my-theme/` block prefix all stay as they are.
 
 ## Next steps
 
-1. Owner: review and merge PR #1 (https://github.com/Relmaur/ml-theme--custom-gutenberg/pull/1).
-2. Human review of ADRs 0001–0004, 0006 and 0007.
-3. Replace the placeholder `header.php` / `footer.php` markup (the plain "Header" and "Footer" text) with real site navigation. It could use the registered `primary_menu` / `footer_menu`.
+1. Human review of ADRs 0001–0004, 0006 and 0007.
+2. Replace the placeholder `header.php` / `footer.php` markup (the plain "Header" and "Footer" text) with real site navigation. It could use the registered `primary_menu` / `footer_menu`.
+3. Owner: decide whether to push and merge `feat/rigid-mode-post-types` (ADR 0008). It's still worthwhile without taw/core: in rigid mode, blog posts get the normal editor again.

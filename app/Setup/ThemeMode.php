@@ -46,6 +46,14 @@ final class ThemeMode implements Bootable
         ['my-theme/hero'],
     ];
 
+    /**
+     * Post types rigid mode locks down unless the `rigid_hybrid/rigid_post_types`
+     * filter says otherwise. Pages are the layouts clients shouldn't break;
+     * posts and any custom post types keep the normal editor.
+     * See ADR 0008.
+     */
+    private const DEFAULT_RIGID_POST_TYPES = ['page'];
+
     /** The resolved mode for this request (one of the constants above). */
     private string $mode;
 
@@ -106,7 +114,8 @@ final class ThemeMode implements Bootable
     }
 
     /**
-     * In rigid mode, the inserter only offers this theme's own blocks.
+     * In rigid mode, the inserter only offers this theme's own blocks
+     * (on rigid post types only; see rigidPostTypes()).
      *
      * @param bool|string[]            $allowed_block_types true = all blocks allowed.
      * @param \WP_Block_Editor_Context $context             Where the editor is running.
@@ -114,9 +123,9 @@ final class ThemeMode implements Bootable
      */
     public function limitToThemeBlocks($allowed_block_types, \WP_Block_Editor_Context $context)
     {
-        // Only restrict the post editor. Other editors (widgets, site editor)
-        // have no post and aren't part of the client editing flow.
-        if (! $context->post instanceof \WP_Post) {
+        // Only restrict the post editor, and only for rigid post types. Other
+        // editors (widgets, site editor) have no post at all.
+        if (! $this->isRigidContext($context)) {
             return $allowed_block_types;
         }
 
@@ -135,8 +144,8 @@ final class ThemeMode implements Bootable
     }
 
     /**
-     * Lock the layout for anyone who isn't allowed to arrange pages, and give
-     * brand-new posts a starting layout.
+     * On rigid post types: lock the layout for anyone who isn't allowed to
+     * arrange pages, and give brand-new posts a starting layout.
      *
      * @param array<string, mixed>     $settings Block editor settings.
      * @param \WP_Block_Editor_Context $context  Where the editor is running.
@@ -144,7 +153,9 @@ final class ThemeMode implements Bootable
      */
     public function lockLayout(array $settings, \WP_Block_Editor_Context $context): array
     {
-        if (! $context->post instanceof \WP_Post) {
+        // The instanceof repeats isRigidContext()'s check so static analysis
+        // knows $context->post is a WP_Post below.
+        if (! $this->isRigidContext($context) || ! $context->post instanceof \WP_Post) {
             return $settings;
         }
 
@@ -162,6 +173,53 @@ final class ThemeMode implements Bootable
         }
 
         return $settings;
+    }
+
+    /**
+     * The post types rigid mode applies to.
+     *
+     * Filterable so a site can lock more types (e.g. add 'post') or fewer
+     * (ADR 0008). The filter value is untrusted: non-strings are dropped, and
+     * anything that isn't an array falls back to the default.
+     *
+     * @return list<string>
+     */
+    public function rigidPostTypes(): array
+    {
+        /**
+         * @param mixed $post_types Post type slugs rigid mode should lock down.
+         */
+        $post_types = apply_filters('rigid_hybrid/rigid_post_types', self::DEFAULT_RIGID_POST_TYPES);
+
+        if (!is_array($post_types)) {
+            _doing_it_wrong(
+                __METHOD__,
+                esc_html(sprintf(
+                    'The rigid_hybrid/rigid_post_types filter must return an array, %s given. Using the default.',
+                    gettype($post_types)
+                )),
+                '1.0.0'
+            );
+            return self::DEFAULT_RIGID_POST_TYPES;
+        }
+
+        $valid = [];
+        foreach ($post_types as $post_type) {
+            if (is_string($post_type) && $post_type !== '') {
+                $valid[] = $post_type;
+            }
+        }
+
+        return $valid;
+    }
+
+    /**
+     * Whether the editor is open on a post whose type rigid mode covers.
+     */
+    private function isRigidContext(\WP_Block_Editor_Context $context): bool
+    {
+        return $context->post instanceof \WP_Post
+            && in_array($context->post->post_type, $this->rigidPostTypes(), true);
     }
 
     /**

@@ -91,6 +91,39 @@ final class ThemeModeTest extends UnitTestCase
         self::assertFalse(has_filter('allowed_block_types_all', [$mode, 'limitToThemeBlocks']));
     }
 
+    public function testRigidModeCoversOnlyPagesByDefault(): void
+    {
+        self::assertSame(['page'], (new ThemeMode())->rigidPostTypes());
+    }
+
+    public function testSitesCanChooseWhichPostTypesAreRigid(): void
+    {
+        Filters\expectApplied('rigid_hybrid/rigid_post_types')
+            ->once()
+            ->with(['page'])
+            ->andReturn(['page', 'post']);
+
+        self::assertSame(['page', 'post'], (new ThemeMode())->rigidPostTypes());
+    }
+
+    public function testDropsInvalidPostTypesFromTheFilter(): void
+    {
+        Filters\expectApplied('rigid_hybrid/rigid_post_types')->andReturn(['page', '', 42, null, 'post']);
+
+        self::assertSame(['page', 'post'], (new ThemeMode())->rigidPostTypes());
+    }
+
+    public function testAFilterThatDoesNotReturnAnArrayFallsBackToPages(): void
+    {
+        Filters\expectApplied('rigid_hybrid/rigid_post_types')->andReturn('page,post');
+        Functions\stubEscapeFunctions();
+        Functions\expect('_doing_it_wrong')
+            ->once()
+            ->with(Mockery::any(), Mockery::pattern('/must return an array, string given/'), '1.0.0');
+
+        self::assertSame(['page'], (new ThemeMode())->rigidPostTypes());
+    }
+
     public function testANonStringFromAFilterIsReportedByItsType(): void
     {
         // A badly written filter could return anything; printing an array

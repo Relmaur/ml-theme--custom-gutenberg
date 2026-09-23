@@ -25,7 +25,7 @@ A WordPress theme (`mlizardo/rigid-hybrid`, text domain `rigid-hybrid`) with a *
 
 - **Two modes** (ADR 0005), set per install with `define('RIGID_HYBRID_MODE', 'rigid' | 'builder');` in `wp-config.php` (default `builder`) and handled by `Setup/ThemeMode.php`:
   - **builder** — clients compose pages from core blocks and theme blocks, with appearance tools on.
-  - **rigid** (opt-in) — the inserter offers only `my-theme/*` blocks, design settings are locked, and users below administrator get `templateLock: 'all'`. Administrators arrange each page's layout; editors change content and images.
+  - **rigid** (opt-in) — design settings are locked site-wide. On **rigid post types** (default `page`; `rigid_hybrid/rigid_post_types` filter, ADR 0008), the inserter offers only `my-theme/*` blocks and users below administrator get `templateLock: 'all'`. Administrators arrange each page's layout; editors change content and images. Other post types keep the normal editor.
 - **Hybrid** — classic PHP templates (`header.php`, `footer.php`, `index.php`) render the page shell; `post_content` is made of custom blocks.
 - Blocks are **dynamic**: `save` returns `null` and `render.php` renders the frontend (see ADR 0004).
 
