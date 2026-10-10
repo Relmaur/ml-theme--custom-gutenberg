@@ -39,3 +39,5 @@ coverage/
 
 # Local integration-test DB settings (see tests/php/.env.testing.example)
 tests/php/.env.testing
+# Content snapshots, database dumps and remote.env (credentials): never committed.
+/.sync/
