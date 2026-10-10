@@ -18,6 +18,33 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # No database dump, snapshot or credentials file committed (on a pull
+  # request, in any of its commits). The script is TAW's shared one, the same
+  # check every TAW theme's CI runs: taw-core resources/ci/check-committed-files.sh.
+  committed-files:
+    name: Committed files (no dumps or credentials)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/checkout@v7
+        with:
+          repository: Relmaur/taw-core
+          ref: v1
+          path: .taw-core-ci
+          sparse-checkout: resources/ci
+          persist-credentials: false
+
+      - name: No dumps, snapshots or credentials committed
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          script=.taw-core-ci/resources/ci/check-committed-files.sh
+          if [ -n "$BASE" ]; then bash "$script" "$BASE" "$HEAD"; else bash "$script"; fi
+
   js:
     name: JS (lint, types, tests, build)
     runs-on: ubuntu-latest
